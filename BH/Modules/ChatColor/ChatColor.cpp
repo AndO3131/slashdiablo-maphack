@@ -38,7 +38,7 @@ void ChatColor::OnLoad() {
 void ChatColor::LoadConfig() {
 	whisperColors.clear();
 
-	BH::config->ReadAssoc("Whisper Color", whisperColors);
+	BH::config->ReadAssoc(L"Whisper Color", whisperColors);
 }
 
 void ChatColor::OnChatPacketRecv(BYTE* packet, bool* block) {
@@ -54,9 +54,9 @@ void ChatColor::OnChatPacketRecv(BYTE* packet, bool* block) {
 
 			bool replace = false;
 			int color = 0;
-			if (whisperColors.find(from) != whisperColors.end()) {
+			if (whisperColors.find(AnsiToUnicode(from)) != whisperColors.end()) {
 				replace = true;
-				color = whisperColors[from];
+				color = whisperColors[AnsiToUnicode(from)];
 			}
 
 			if (replace) {

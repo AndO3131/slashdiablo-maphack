@@ -62,14 +62,27 @@ bool from_string(T& t,
   return !(iss >> f >> t).fail();
 }
 
+template <class T>
+bool from_wstring(T& t,
+	const std::wstring& s,
+	std::ios_base& (*f)(std::ios_base&))
+{
+	std::wistringstream iss(s);
+	return !(iss >> f >> t).fail();
+}
+
 template< class type> std::string to_string( const type & value)
 { std::stringstream ss; ss << value; return ss.str(); }
 
 bool IsTrue(const char *str);
+bool IsTrue(const wchar_t *str);
 bool StringToBool(std::string str);
+bool WStringToBool(std::wstring str);
 int StringToNumber(std::string str);
+int WStringToNumber(std::wstring str);
 
 std::string Trim(std::string source);
+std::wstring Trim(std::wstring source);
 
 void PrintText(DWORD Color, char *szText, ...);
 

@@ -36,11 +36,11 @@ void Bnet::OnLoad() {
 }
 
 void Bnet::LoadConfig() {
-	BH::config->ReadBoolean("Autofill Last Game", *showLastGame);
-	BH::config->ReadBoolean("Autofill Last Password", *showLastPass);
-	BH::config->ReadBoolean("Autofill Next Game", *nextInstead);
-	BH::config->ReadBoolean("Autofill Description", *keepDesc);
-	BH::config->ReadInt("Fail To Join", failToJoin);
+	BH::config->ReadBoolean(L"Autofill Last Game", *showLastGame);
+	BH::config->ReadBoolean(L"Autofill Last Password", *showLastPass);
+	BH::config->ReadBoolean(L"Autofill Next Game", *nextInstead);
+	BH::config->ReadBoolean(L"Autofill Description", *keepDesc);
+	BH::config->ReadInt(L"Fail To Join", failToJoin);
 
 	InstallPatches();
 }

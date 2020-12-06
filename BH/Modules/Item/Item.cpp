@@ -104,29 +104,29 @@ void Item::OnGameJoin() {
 }
 
 void Item::LoadConfig() {
-	BH::config->ReadToggle("Show Ethereal", "None", true, Toggles["Show Ethereal"]);
-	BH::config->ReadToggle("Show Sockets", "None", true, Toggles["Show Sockets"]);
-	BH::config->ReadToggle("Show ILvl", "None", true, Toggles["Show iLvl"]);
-	BH::config->ReadToggle("Show Rune Numbers", "None", true, Toggles["Show Rune Numbers"]);
-	BH::config->ReadToggle("Alt Item Style", "None", true, Toggles["Alt Item Style"]);
-	BH::config->ReadToggle("Color Mod", "None", false, Toggles["Color Mod"]);
-	BH::config->ReadToggle("Shorten Item Names", "None", false, Toggles["Shorten Item Names"]);
-	BH::config->ReadToggle("Advanced Item Display", "None", false, Toggles["Advanced Item Display"]);
-	BH::config->ReadToggle("Item Drop Notifications", "None", false, Toggles["Item Drop Notifications"]);
-	BH::config->ReadToggle("Item Close Notifications", "None", false, Toggles["Item Close Notifications"]);
-	BH::config->ReadToggle("Item Detailed Notifications", "None", false, Toggles["Item Detailed Notifications"]);
-	BH::config->ReadToggle("Verbose Notifications", "None", false, Toggles["Verbose Notifications"]);
-	BH::config->ReadToggle("Allow Unknown Items", "None", false, Toggles["Allow Unknown Items"]);
-	BH::config->ReadToggle("Suppress Invalid Stats", "None", false, Toggles["Suppress Invalid Stats"]);
-	BH::config->ReadToggle("Always Show Item Stat Ranges", "None", true, Toggles["Always Show Item Stat Ranges"]);
-	BH::config->ReadInt("Filter Level", filterLevelSetting);
-	BH::config->ReadInt("Ping Level", pingLevelSetting);
+	BH::config->ReadToggle(L"Show Ethereal", L"None", true, Toggles["Show Ethereal"]);
+	BH::config->ReadToggle(L"Show Sockets", L"None", true, Toggles["Show Sockets"]);
+	BH::config->ReadToggle(L"Show ILvl", L"None", true, Toggles["Show iLvl"]);
+	BH::config->ReadToggle(L"Show Rune Numbers", L"None", true, Toggles["Show Rune Numbers"]);
+	BH::config->ReadToggle(L"Alt Item Style", L"None", true, Toggles["Alt Item Style"]);
+	BH::config->ReadToggle(L"Color Mod", L"None", false, Toggles["Color Mod"]);
+	BH::config->ReadToggle(L"Shorten Item Names", L"None", false, Toggles["Shorten Item Names"]);
+	BH::config->ReadToggle(L"Advanced Item Display", L"None", false, Toggles["Advanced Item Display"]);
+	BH::config->ReadToggle(L"Item Drop Notifications", L"None", false, Toggles["Item Drop Notifications"]);
+	BH::config->ReadToggle(L"Item Close Notifications", L"None", false, Toggles["Item Close Notifications"]);
+	BH::config->ReadToggle(L"Item Detailed Notifications", L"None", false, Toggles["Item Detailed Notifications"]);
+	BH::config->ReadToggle(L"Verbose Notifications", L"None", false, Toggles["Verbose Notifications"]);
+	BH::config->ReadToggle(L"Allow Unknown Items", L"None", false, Toggles["Allow Unknown Items"]);
+	BH::config->ReadToggle(L"Suppress Invalid Stats", L"None", false, Toggles["Suppress Invalid Stats"]);
+	BH::config->ReadToggle(L"Always Show Item Stat Ranges", L"None", true, Toggles["Always Show Item Stat Ranges"]);
+	BH::config->ReadInt(L"Filter Level", filterLevelSetting);
+	BH::config->ReadInt(L"Ping Level", pingLevelSetting);
 
 	ItemDisplay::UninitializeItemRules();
 
 	//InitializeMPQData();
 
-	BH::config->ReadKey("Show Players Gear", "VK_0", showPlayer);
+	BH::config->ReadKey(L"Show Players Gear", L"VK_0", showPlayer);
 }
 
 void Item::DrawSettings() {
@@ -295,8 +295,8 @@ int CreateUnitItemInfo(UnitItemInfo *uInfo, UnitAny *item) {
 	char* code = D2COMMON_GetItemText(item->dwTxtFileNo)->szCode;
 	uInfo->itemCode[0] = code[0]; uInfo->itemCode[1] = code[1]; uInfo->itemCode[2] = code[2]; uInfo->itemCode[3] = 0;
 	uInfo->item = item;
-	if (ItemAttributeMap.find(uInfo->itemCode) != ItemAttributeMap.end()) {
-		uInfo->attrs = ItemAttributeMap[uInfo->itemCode];
+	if (ItemAttributeMap.find(UnicodeToAnsi(uInfo->itemCode)) != ItemAttributeMap.end()) {
+		uInfo->attrs = ItemAttributeMap[UnicodeToAnsi(uInfo->itemCode)];
 		return 0;
 	} else {
 		return -1;
@@ -312,9 +312,9 @@ void __fastcall Item::ItemNamePatch(wchar_t *name, UnitAny *item)
 	if (Toggles["Advanced Item Display"].state) {
 		UnitItemInfo uInfo;
 		if (!CreateUnitItemInfo(&uInfo, item)) {
-			GetItemName(&uInfo, itemName);
+			GetItemName(&uInfo, wstring(name));
 		} else {
-			HandleUnknownItemCode(uInfo.itemCode, "name");
+			HandleUnknownItemCode(uInfo.itemCode, L"name");
 		}
 	} else {
 		OrigGetItemName(item, itemName, code);
@@ -644,9 +644,9 @@ void __stdcall Item::OnProperties(wchar_t * wTxt)
 	// Add description
 	if (Toggles["Advanced Item Display"].state) {
 		int aLen = wcslen(wTxt);
-		string desc = item_desc_cache.Get(&uInfo);
-		if (desc != "") {
-			auto chars_written = MultiByteToWideChar(CODE_PAGE, MB_PRECOMPOSED, desc.c_str(), -1, wDesc, 128);
+		wstring desc = item_desc_cache.Get(&uInfo);
+		if (desc != L"") {
+			auto chars_written = MultiByteToWideChar(CODE_PAGE, MB_PRECOMPOSED, UnicodeToAnsi(desc.c_str()), -1, wDesc, 128);
 			swprintf_s(wTxt + aLen, MAXLEN - aLen,
 				L"%s%s\n",
 				(chars_written > 0) ? wDesc : L"\377c1 Descirption string too long!",

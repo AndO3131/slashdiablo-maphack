@@ -24,7 +24,7 @@ void Gamefilter::OnLoad() {
 		listRefresh->Install();
 	}
 	refreshTime = 1500;
-	BH::config->ReadInt("GameListRefresh", refreshTime);
+	BH::config->ReadInt(L"GameListRefresh", refreshTime);
 
 	showDiff = &bools["Show Difficulty"];
 	*showDiff = true;
@@ -36,8 +36,8 @@ void Gamefilter::OnLoad() {
 }
 
 void Gamefilter::LoadConfig() {
-	BH::config->ReadBoolean("Show Difficulty", *showDiff);
-	BH::config->ReadBoolean("Show Gameserver", *showGs);
+	BH::config->ReadBoolean(L"Show Difficulty", *showDiff);
+	BH::config->ReadBoolean(L"Show Gameserver", *showGs);
 }
 
 void Gamefilter::OnUnload() {

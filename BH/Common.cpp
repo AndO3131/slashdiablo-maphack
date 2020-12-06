@@ -105,11 +105,27 @@ std::string Trim(std::string source) {
 	return source;
 }
 
+std::wstring Trim(std::wstring source) {
+	source = source.erase(0, source.find_first_not_of(L" "));
+	source = source.erase(source.find_last_not_of(L" ") + 1);
+	source = source.erase(0, source.find_first_not_of(L"\t"));
+	source = source.erase(source.find_last_not_of(L"\t") + 1);
+	return source;
+}
+
 bool IsTrue(const char *str) {
 	return (_stricmp(str, "1") == 0 || _stricmp(str, "y") == 0 || _stricmp(str, "yes") == 0 || _stricmp(str, "true") == 0);
 }
 
+bool IsTrue(const wchar_t *str) {
+	return (_wcsicmp(str, L"1") == 0 || _wcsicmp(str, L"y") == 0 || _wcsicmp(str, L"yes") == 0 || _wcsicmp(str, L"true") == 0);
+}
+
 bool StringToBool(std::string str) {
+	return IsTrue(str.c_str());
+}
+
+bool WStringToBool(std::wstring str) {
 	return IsTrue(str.c_str());
 }
 
@@ -119,6 +135,17 @@ int StringToNumber(std::string str) {
 		from_string<int>(ret, str, std::hex);
 	} else {
 		from_string<int>(ret, str, std::dec);
+	}
+	return ret;
+}
+
+int WStringToNumber(std::wstring str) {
+	int ret;
+	if (!str.find(L"0x")) {
+		from_wstring<int>(ret, str, std::hex);
+	}
+	else {
+		from_wstring<int>(ret, str, std::dec);
 	}
 	return ret;
 }

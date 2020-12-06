@@ -2,56 +2,56 @@
 #include "Item.h"
 
 // All the types able to be combined with the + operator
-#define COMBO_STATS					\
-	{"LIFE", STAT_MAXHP},			\
-	{"MANA", STAT_MAXMANA},			\
-	{"STR", STAT_STRENGTH},			\
-	{"DEX", STAT_DEXTERITY},		\
-	{"CRES", STAT_COLDRESIST},		\
-	{"FRES", STAT_FIRERESIST},		\
-	{"LRES", STAT_LIGHTNINGRESIST},	\
-	{"PRES", STAT_POISONRESIST},	\
-	{"MINDMG", STAT_MINIMUMDAMAGE},	\
-	{"MAXDMG", STAT_MAXIMUMDAMAGE},	\
+#define COMBO_STATS						\
+	{L"LIFE", STAT_MAXHP},				\
+	{L"MANA", STAT_MAXMANA},			\
+	{L"STR", STAT_STRENGTH},			\
+	{L"DEX", STAT_DEXTERITY},			\
+	{L"CRES", STAT_COLDRESIST},			\
+	{L"FRES", STAT_FIRERESIST},			\
+	{L"LRES", STAT_LIGHTNINGRESIST},	\
+	{L"PRES", STAT_POISONRESIST},		\
+	{L"MINDMG", STAT_MINIMUMDAMAGE},	\
+	{L"MAXDMG", STAT_MAXIMUMDAMAGE},	\
 
 // All colors here must also be defined in MAP_COLOR_REPLACEMENTS
 #define COLOR_REPLACEMENTS	\
-	{"WHITE", "ÿc0"},		\
-	{"RED", "ÿc1"},			\
-	{"GREEN", "ÿc2"},		\
-	{"BLUE", "ÿc3"},		\
-	{"GOLD", "ÿc4"},		\
-	{"GRAY", "ÿc5"},		\
-	{"BLACK", "ÿc6"},		\
-	{"TAN", "ÿc7"},			\
-	{"ORANGE", "ÿc8"},		\
-	{"YELLOW", "ÿc9"},		\
-	{"PURPLE", "ÿc;"},		\
-	{"DARK_GREEN", "ÿc:"},	\
-	{"CORAL", "\xFF" "c\x06"},		\
-	{"SAGE", "\xFF" "c\x07"},		\
-	{"TEAL", "\xFF" "c\x09"},		\
-	{"LIGHT_GRAY", "\xFF" "c\x0C"}
+	{L"WHITE", L"ÿc0"},		\
+	{L"RED", L"ÿc1"},			\
+	{L"GREEN", L"ÿc2"},		\
+	{L"BLUE", L"ÿc3"},		\
+	{L"GOLD", L"ÿc4"},		\
+	{L"GRAY", L"ÿc5"},		\
+	{L"BLACK", L"ÿc6"},		\
+	{L"TAN", L"ÿc7"},			\
+	{L"ORANGE", L"ÿc8"},		\
+	{L"YELLOW", L"ÿc9"},		\
+	{L"PURPLE", L"ÿc;"},		\
+	{L"DARK_GREEN", L"ÿc:"},	\
+	{L"CORAL", L"\xFF" L"c\x06"},		\
+	{L"SAGE", L"\xFF" L"c\x07"},		\
+	{L"TEAL", L"\xFF" L"c\x09"},		\
+	{L"LIGHT_GRAY", L"\xFF" L"c\x0C"}
 
 #define MAP_COLOR_WHITE     0x20
 
 #define MAP_COLOR_REPLACEMENTS	\
-	{"WHITE", 0x20},		\
-	{"RED", 0x0A},			\
-	{"GREEN", 0x84},		\
-	{"BLUE", 0x97},			\
-	{"GOLD", 0x0D},			\
-	{"GRAY", 0xD0},			\
-	{"BLACK", 0x00},		\
-	{"TAN", 0x5A},			\
-	{"ORANGE", 0x60},		\
-	{"YELLOW", 0x0C},		\
-	{"PURPLE", 0x9B},		\
-	{"DARK_GREEN", 0x76},	\
-	{"CORAL", 0x66},		\
-	{"SAGE", 0x82},			\
-	{"TEAL", 0xCB},			\
-	{"LIGHT_GRAY", 0xD6}
+	{L"WHITE", 0x20},		\
+	{L"RED", 0x0A},			\
+	{L"GREEN", 0x84},		\
+	{L"BLUE", 0x97},			\
+	{L"GOLD", 0x0D},			\
+	{L"GRAY", 0xD0},			\
+	{L"BLACK", 0x00},		\
+	{L"TAN", 0x5A},			\
+	{L"ORANGE", 0x60},		\
+	{L"YELLOW", 0x0C},		\
+	{L"PURPLE", 0x9B},		\
+	{L"DARK_GREEN", 0x76},	\
+	{L"CORAL", 0x66},		\
+	{L"SAGE", 0x82},			\
+	{L"TEAL", 0xCB},			\
+	{L"LIGHT_GRAY", 0xD6}
 
 enum Operation {
 	EQUAL,
@@ -64,8 +64,8 @@ SkillReplace skills[] = {
 	COMBO_STATS 
 };
 
-std::map<std::string, int> UnknownItemCodes;
-vector<pair<string, string>> rules;
+std::map<std::wstring, int> UnknownItemCodes;
+vector<pair<wstring, wstring>> rules;
 vector<Rule*> RuleList;
 vector<Rule*> NameRuleList;
 vector<Rule*> DescRuleList;
@@ -78,10 +78,10 @@ TrueCondition *trueCondition = new TrueCondition();
 FalseCondition *falseCondition = new FalseCondition();
 
 // Helper function to get a list of strings
-vector<string> split(const string &s, char delim) {
-	vector<string> result;
-	stringstream ss(s);
-	string item;
+vector<wstring> split(const wstring &s, wchar_t delim) {
+	vector<wstring> result;
+	wstringstream ss(s);
+	wstring item;
 	while (getline(ss, item, delim)) {
 		result.push_back(item);
 	}
@@ -163,8 +163,8 @@ BYTE RuneNumberFromItemCode(char *code){
 }
 
 // Find the item description. This code is called only when there's a cache miss
-string ItemDescLookupCache::make_cached_T(UnitItemInfo *uInfo) {
-	string new_name;
+wstring ItemDescLookupCache::make_cached_T(UnitItemInfo *uInfo) {
+	wstring new_name;
 	for (vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
 		if ((*it)->Evaluate(uInfo, NULL)) {
 			SubstituteNameVariables(uInfo, new_name, (*it)->action.description);
@@ -176,19 +176,19 @@ string ItemDescLookupCache::make_cached_T(UnitItemInfo *uInfo) {
 	return new_name;
 }
 
-string ItemDescLookupCache::to_str(const string &name) {
+wstring ItemDescLookupCache::to_str(const wstring &name) {
 	size_t start_pos = 0;
-	std::string itemName(name);
-	while ((start_pos = itemName.find('\n', start_pos)) != std::string::npos) {
-		itemName.replace(start_pos, 1, " - ");
+	std::wstring itemName(name);
+	while ((start_pos = itemName.find('\n', start_pos)) != std::wstring::npos) {
+		itemName.replace(start_pos, 1, L" - ");
 		start_pos += 3;
 	}
 	return itemName;
 }
 
 // Find the item name. This code is called only when there's a cache miss
-string ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const string &name) {
-	string new_name(name);
+wstring ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const wstring &name) {
+	wstring new_name(name);
 	for (vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
 		if ((*it)->Evaluate(uInfo, NULL)) {
 			SubstituteNameVariables(uInfo, new_name, (*it)->action.name);
@@ -214,16 +214,16 @@ string ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const string &nam
 					
 		}
 		bool whitelisted = do_not_block_cache.Get(uInfo);
-		if (!has_map_action && !whitelisted) return new_name + " [blocked]";
+		if (!has_map_action && !whitelisted) return new_name + L" [blocked]";
 	}
 	return new_name;
 }
 
-string ItemNameLookupCache::to_str(const string &name) {
+wstring ItemNameLookupCache::to_str(const wstring &name) {
 	size_t start_pos = 0;
-	std::string itemName(name);
+	std::wstring itemName(name);
 	while ((start_pos = itemName.find('\n', start_pos)) != std::string::npos) {
-		itemName.replace(start_pos, 1, " - ");
+		itemName.replace(start_pos, 1, L" - ");
 		start_pos += 3;
 	}
 	return itemName;
@@ -239,10 +239,10 @@ vector<Action> MapActionLookupCache::make_cached_T(UnitItemInfo *uInfo) {
 	return actions;
 }
 
-string MapActionLookupCache::to_str(const vector<Action> &actions) {
-	string name;
+wstring MapActionLookupCache::to_str(const vector<Action> &actions) {
+	wstring name;
 	for (auto &action : actions) {
-		name += action.name + " ";
+		name += action.name + L" ";
 	}
 	return name;
 }
@@ -256,8 +256,8 @@ bool IgnoreLookupCache::make_cached_T(UnitItemInfo *uInfo) {
 	return false;
 }
 
-string IgnoreLookupCache::to_str(const bool &ignore) {
-	return ignore ? "blocked" : "not blocked";
+wstring IgnoreLookupCache::to_str(const bool &ignore) {
+	return ignore ? L"blocked" : L"not blocked";
 }
 
 // least recently used cache for storing a limited number of item names
@@ -267,15 +267,15 @@ MapActionLookupCache map_action_cache(MapRuleList);
 IgnoreLookupCache do_not_block_cache(DoNotBlockRuleList);
 IgnoreLookupCache ignore_cache(IgnoreRuleList);
 
-void GetItemName(UnitItemInfo *uInfo, string &name) {
-	string new_name = item_name_cache.Get(uInfo, name);
+void GetItemName(UnitItemInfo *uInfo, wstring &name) {
+	wstring new_name = item_name_cache.Get(uInfo, name);
 	name.assign(new_name);
 }
 
-void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &action_name) {
-	char origName[128], sockets[4], code[4], ilvl[4], alvl[4], craft_alvl[4], runename[16] = "", runenum[4] = "0";
-	char gemtype[16] = "", gemlevel[16] = "", sellValue[16] = "", statVal[16] = "";
-	char lvlreq[4], wpnspd[4], rangeadder[4];
+void SubstituteNameVariables(UnitItemInfo *uInfo, wstring &name, const wstring &action_name) {
+	wchar_t origName[128], sockets[4], code[4], ilvl[4], alvl[4], craft_alvl[4], runename[16] = L"", runenum[4] = L"0";
+	wchar_t gemtype[16] = L"", gemlevel[16] = L"", sellValue[16] = L"", statVal[16] = L"";
+	wchar_t lvlreq[4], wpnspd[4], rangeadder[4];
 
 	UnitAny *item = uInfo->item;
 	ItemText *txt = D2COMMON_GetItemText(item->dwTxtFileNo);
@@ -287,44 +287,44 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &ac
 	auto ilvl_int = item->pItemData->dwItemLevel;
 	auto alvl_int = GetAffixLevel((BYTE)item->pItemData->dwItemLevel, (BYTE)uInfo->attrs->qualityLevel, uInfo->attrs->magicLevel);
 	auto clvl_int = D2COMMON_GetUnitStat(D2CLIENT_GetPlayerUnit(), STAT_LEVEL, 0); 
-	sprintf_s(sockets, "%d", D2COMMON_GetUnitStat(item, STAT_SOCKETS, 0));
-	sprintf_s(ilvl, "%d", ilvl_int);
-	sprintf_s(alvl, "%d", alvl_int);
-	sprintf_s(craft_alvl, "%d", GetAffixLevel((BYTE)(ilvl_int/2+clvl_int/2), (BYTE)uInfo->attrs->qualityLevel, uInfo->attrs->magicLevel));
-	sprintf_s(origName, "%s", name.c_str());
+	swprintf_s(sockets, L"%d", D2COMMON_GetUnitStat(item, STAT_SOCKETS, 0));
+	swprintf_s(ilvl, L"%d", ilvl_int);
+	swprintf_s(alvl, L"%d", alvl_int);
+	swprintf_s(craft_alvl, L"%d", GetAffixLevel((BYTE)(ilvl_int/2+clvl_int/2), (BYTE)uInfo->attrs->qualityLevel, uInfo->attrs->magicLevel));
+	swprintf_s(origName, L"%s", name.c_str());
 
-	sprintf_s(lvlreq, "%d", GetRequiredLevel(uInfo->item));
-	sprintf_s(wpnspd, "%d", txt->speed); //Add these as matchable stats too, maybe?
-	sprintf_s(rangeadder, "%d", txt->rangeadder);
+	swprintf_s(lvlreq, L"%d", GetRequiredLevel(uInfo->item));
+	swprintf_s(wpnspd, L"%d", txt->speed); //Add these as matchable stats too, maybe?
+	swprintf_s(rangeadder, L"%d", txt->rangeadder);
 
 	UnitAny* pUnit = D2CLIENT_GetPlayerUnit();
 	if (pUnit && txt->fQuest == 0) {
-		sprintf_s(sellValue, "%d", D2COMMON_GetItemPrice(pUnit, item, D2CLIENT_GetDifficulty(), (DWORD)D2CLIENT_GetQuestInfo(), 0x201, 1));
+		swprintf_s(sellValue, L"%d", D2COMMON_GetItemPrice(pUnit, item, D2CLIENT_GetDifficulty(), (DWORD)D2CLIENT_GetQuestInfo(), 0x201, 1));
 	}
 
 	if (IsRune(uInfo->attrs)) {
-		sprintf_s(runenum, "%d", RuneNumberFromItemCode(code));
-		sprintf_s(runename, name.substr(0, name.find(' ')).c_str());
+		swprintf_s(runenum, L"%d", RuneNumberFromItemCode(UnicodeToAnsi(code)));
+		swprintf_s(runename, name.substr(0, name.find(' ')).c_str());
 	} else if (IsGem(uInfo->attrs)) {
-		sprintf_s(gemlevel, "%s", GetGemLevelString(GetGemLevel(uInfo->attrs)));
-		sprintf_s(gemtype, "%s", GetGemTypeString(GetGemType(uInfo->attrs)));
+		swprintf_s(gemlevel, L"%s", GetGemLevelString(GetGemLevel(uInfo->attrs)));
+		swprintf_s(gemtype, L"%s", GetGemTypeString(GetGemType(uInfo->attrs)));
 	}
 	ActionReplace replacements[] = {
-		{"NAME", origName},
-		{"SOCKETS", sockets},
-		{"RUNENUM", runenum},
-		{"RUNENAME", runename},
-		{"GEMLEVEL", gemlevel},
-		{"GEMTYPE", gemtype},
-		{"ILVL", ilvl},
-		{"ALVL", alvl},
-		{"CRAFTALVL", craft_alvl},
-		{"LVLREQ", lvlreq},
-		{"WPNSPD", wpnspd},
-		{"RANGE", rangeadder},
-		{"CODE", code},
-		{"NL", "\n"},
-		{"PRICE", sellValue},
+		{L"NAME", origName},
+		{L"SOCKETS", sockets},
+		{L"RUNENUM", runenum},
+		{L"RUNENAME", runename},
+		{L"GEMLEVEL", gemlevel},
+		{L"GEMTYPE", gemtype},
+		{L"ILVL", ilvl},
+		{L"ALVL", alvl},
+		{L"CRAFTALVL", craft_alvl},
+		{L"LVLREQ", lvlreq},
+		{L"WPNSPD", wpnspd},
+		{L"RANGE", rangeadder},
+		{L"CODE", code},
+		{L"NL", L"\n"},
+		{L"PRICE", sellValue},
 		COLOR_REPLACEMENTS
 	};
 	name.assign(action_name);
@@ -332,26 +332,26 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &ac
 
 		// Revert to non-glide colors here
 		if (*p_D2GFX_VideoMode != VIDEO_MODE_GLIDE) {
-			if (replacements[n].key == "CORAL") {
-				replacements[n].value = "\377c1"; // red
-			} else if (replacements[n].key == "SAGE") {
-				replacements[n].value = "\377c2"; // green
-			} else if (replacements[n].key == "TEAL") {
-				replacements[n].value = "\377c3"; // blue
-			} else if (replacements[n].key == "LIGHT_GRAY") {
-				replacements[n].value = "\377c5"; // gray
+			if (replacements[n].key == L"CORAL") {
+				replacements[n].value = L"\377c1"; // red
+			} else if (replacements[n].key == L"SAGE") {
+				replacements[n].value = L"\377c2"; // green
+			} else if (replacements[n].key == L"TEAL") {
+				replacements[n].value = L"\377c3"; // blue
+			} else if (replacements[n].key == L"LIGHT_GRAY") {
+				replacements[n].value = L"\377c5"; // gray
 			}
 		}
 		
-		while (name.find("%" + replacements[n].key + "%") != string::npos) {
-			name.replace(name.find("%" + replacements[n].key + "%"), replacements[n].key.length() + 2, replacements[n].value);
+		while (name.find(L"%" + replacements[n].key + L"%") != wstring::npos) {
+			name.replace(name.find(L"%" + replacements[n].key + L"%"), replacements[n].key.length() + 2, replacements[n].value);
 		}
 	}
 
 	// stat replacements
-	if (name.find("%STAT-") != string::npos) {
-		std::regex stat_reg("%STAT-([0-9]{1,4})%", std::regex_constants::ECMAScript);
-		std::smatch stat_match;
+	if (name.find(L"%STAT-") != wstring::npos) {
+		std::wregex stat_reg(L"%STAT-([0-9]{1,4})%", std::regex_constants::ECMAScript);
+		std::wsmatch stat_match;
 
 		while (std::regex_search(name, stat_match, stat_reg)) {
 			int stat = stoi(stat_match[1].str(), nullptr, 10);
@@ -361,7 +361,7 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &ac
 				// Hp and mana need adjusting
 				if (stat == 7 || stat == 9)
 					value /= 256;
-				sprintf_s(statVal, "%d", value);
+				swprintf_s(statVal, L"%d", value);
 			}
 			name.replace(
 					stat_match.prefix().length(),
@@ -419,14 +419,14 @@ BYTE GetRequiredLevel(UnitAny* item) {
 	return rlvl;
 }
 
-BYTE GetOperation(string *op) {
+BYTE GetOperation(wstring *op) {
 	if (op->length() < 1) {
 		return NONE;
-	} else if ((*op)[0] == '=') {
+	} else if ((*op)[0] == L'=') {
 		return EQUAL;
-	} else if ((*op)[0] == '<') {
+	} else if ((*op)[0] == L'<') {
 		return LESS_THAN;
-	} else if ((*op)[0] == '>') {
+	} else if ((*op)[0] == L'>') {
 		return GREATER_THAN;
 	}
 	return NONE;
@@ -450,21 +450,21 @@ bool IntegerCompare(unsigned int Lvalue, BYTE operation, unsigned int Rvalue) {
 	}
 }
 
-void removeSubstrs(string& s, const string& p) {
-	string::size_type n = p.length();
-	for (string::size_type i = s.find(p); i != string::npos; i = s.find(p))
+void removeSubstrs(wstring& s, const wstring& p) {
+	wstring::size_type n = p.length();
+	for (wstring::size_type i = s.find(p); i != wstring::npos; i = s.find(p))
 		s.erase(i, n);
 }
 
-std::string without_invis_chars(const std::string &name) {
-	string wo_invis_chars(name);
+std::wstring without_invis_chars(const std::wstring &name) {
+	wstring wo_invis_chars(name);
 	ColorReplace colors[] = {
 		MAP_COLOR_REPLACEMENTS
 	};
 	for (int n = 0; n < sizeof(colors) / sizeof(colors[0]); n++) {
-		removeSubstrs(wo_invis_chars, "%" + colors[n].key + "%");
+		removeSubstrs(wo_invis_chars, L"%" + colors[n].key + L"%");
 	}
-	removeSubstrs(wo_invis_chars, " ");
+	removeSubstrs(wo_invis_chars, L" ");
 	return wo_invis_chars;
 }
 
@@ -481,18 +481,18 @@ namespace ItemDisplay {
 		item_display_initialized = true;
 		rules.clear();
 		ResetCaches();
-		BH::itemConfig->ReadMapList("ItemDisplay", rules);
+		BH::itemConfig->ReadMapList(L"ItemDisplay", rules);
 		for (unsigned int i = 0; i < rules.size(); i++) {
-			string buf;
-			stringstream ss(rules[i].first);
-			vector<string> tokens;
+			wstring buf;
+			wstringstream ss(rules[i].first);
+			vector<wstring> tokens;
 			while (ss >> buf) {
 				tokens.push_back(buf);
 			}
 
 			LastConditionType = CT_None;
 			vector<Condition*> RawConditions;
-			for (vector<string>::iterator tok = tokens.begin(); tok < tokens.end(); tok++) {
+			for (vector<wstring>::iterator tok = tokens.begin(); tok < tokens.end(); tok++) {
 				Condition::BuildConditions(RawConditions, (*tok));
 			}
 			Rule *r = new Rule(RawConditions, &(rules[i].second));
@@ -551,21 +551,21 @@ namespace ItemDisplay {
 	}
 }
 
-Rule::Rule(vector<Condition*> &inputConditions, string *str) {
+Rule::Rule(vector<Condition*> &inputConditions, wstring *str) {
 	Condition::ProcessConditions(inputConditions, conditions);
 	BuildAction(str, &action);
 	conditionStack.reserve(conditions.size()); // TODO: too large?
 }
 
-void BuildAction(string *str, Action *act) {
-	act->name = string(str->c_str());
+void BuildAction(wstring *str, Action *act) {
+	act->name = wstring(str->c_str());
 
 	// upcase all text in a %replacement_string%
 	// for some reason \w wasn't catching _, so I added it to the groups
-	std::regex replace_reg(
-			R"(^(?:(?:%[^%]*%)|[^%])*%((?:\w|_|-)*?[a-z]+?(?:\w|_|-)*?)%)",
+	std::wregex replace_reg(
+			L"(^(?:(?:%[^%]*%)|[^%])*%((?:\w|_|-)*?[a-z]+?(?:\w|_|-)*?)%)",
 			std::regex_constants::ECMAScript);
-	std::smatch replace_match;
+	std::wsmatch replace_match;
 	while (std::regex_search(act->name, replace_match, replace_reg)) {
 		auto offset = replace_match[1].first - act->name.begin();
 		std::transform(
@@ -577,86 +577,86 @@ void BuildAction(string *str, Action *act) {
 	}
 
 	// new stuff:
-	act->borderColor = ParseMapColor(act, "BORDER");
-	act->colorOnMap = ParseMapColor(act, "MAP");
-	act->dotColor = ParseMapColor(act, "DOT");
-	act->pxColor = ParseMapColor(act, "PX");
-	act->lineColor = ParseMapColor(act, "LINE");
-	act->notifyColor = ParseMapColor(act, "NOTIFY");
-	act->pingLevel = ParsePingLevel(act, "TIER");
+	act->borderColor = ParseMapColor(act, L"BORDER");
+	act->colorOnMap = ParseMapColor(act, L"MAP");
+	act->dotColor = ParseMapColor(act, L"DOT");
+	act->pxColor = ParseMapColor(act, L"PX");
+	act->lineColor = ParseMapColor(act, L"LINE");
+	act->notifyColor = ParseMapColor(act, L"NOTIFY");
+	act->pingLevel = ParsePingLevel(act, L"TIER");
 	act->description = ParseDescription(act);
 
 	// legacy support:
-	size_t map = act->name.find("%MAP%");
-	if (map != string::npos) {
+	size_t map = act->name.find(L"%MAP%");
+	if (map != wstring::npos) {
 		int mapColor = MAP_COLOR_WHITE;
 		size_t lastColorPos = 0;
 		ColorReplace colors[] = {
 			MAP_COLOR_REPLACEMENTS
 		};
 		for (int n = 0; n < sizeof(colors) / sizeof(colors[0]); n++) {
-			size_t pos = act->name.find("%" + colors[n].key + "%");
-			if (pos != string::npos && pos < map && pos >= lastColorPos) {
+			size_t pos = act->name.find(L"%" + colors[n].key + L"%");
+			if (pos != wstring::npos && pos < map && pos >= lastColorPos) {
 				mapColor = colors[n].value;
 				lastColorPos = pos;
 			}
 		}
 
-		act->name.replace(map, 5, "");
+		act->name.replace(map, 5, L"");
 		act->colorOnMap = mapColor;
 		if (act->borderColor == UNDEFINED_COLOR)
 			act->borderColor = act->colorOnMap;
 	}
 
-	size_t done = act->name.find("%CONTINUE%");
-	if (done != string::npos) {
-		act->name.replace(done, 10, "");
+	size_t done = act->name.find(L"%CONTINUE%");
+	if (done != wstring::npos) {
+		act->name.replace(done, 10, L"");
 		act->stopProcessing = false;
 	}
 }
 
-string ParseDescription(Action *act) {
-	size_t l_idx = act->name.find("{");
-	size_t r_idx = act->name.find("}");
-	if (l_idx == string::npos || r_idx == string::npos || l_idx > r_idx) return "";
+wstring ParseDescription(Action *act) {
+	size_t l_idx = act->name.find(L"{");
+	size_t r_idx = act->name.find(L"}");
+	if (l_idx == wstring::npos || r_idx == wstring::npos || l_idx > r_idx) return L"";
 	size_t start_idx = l_idx + 1;
 	size_t len = r_idx - start_idx;
-	string desc_string = act->name.substr(start_idx, len);
-	act->name.replace(l_idx, len+2, "");
+	wstring desc_string = act->name.substr(start_idx, len);
+	act->name.replace(l_idx, len+2, L"");
 	return desc_string;
 }
 
-int ParseMapColor(Action *act, const string& key_string) {
-	std::regex pattern("%" + key_string + "-([a-f0-9]{1,4})%",
+int ParseMapColor(Action *act, const wstring& key_string) {
+	std::wregex pattern(L"%" + key_string + L"-([a-f0-9]{1,4})%",
 		std::regex_constants::ECMAScript | std::regex_constants::icase);
 	int color = UNDEFINED_COLOR;
-	std::smatch the_match;
+	std::wsmatch the_match;
 
 	if (std::regex_search(act->name, the_match, pattern)) {
 		color = stoi(the_match[1].str(), nullptr, 16);
 		act->name.replace(
 				the_match.prefix().length(),
-				the_match[0].length(), "");
+				the_match[0].length(), L"");
 	}
 	return color;
 }
 
-int ParsePingLevel(Action *act, const string& key_string) {
-	std::regex pattern("%" + key_string + "-([0-9])%",
+int ParsePingLevel(Action *act, const wstring& key_string) {
+	std::wregex pattern(L"%" + key_string + L"-([0-9])%",
 		std::regex_constants::ECMAScript | std::regex_constants::icase);
 	int ping_level = 0;
-	std::smatch the_match;
+	std::wsmatch the_match;
 
 	if (std::regex_search(act->name, the_match, pattern)) {
 		ping_level = stoi(the_match[1].str());
 		act->name.replace(
 				the_match.prefix().length(),
-				the_match[0].length(), "");
+				the_match[0].length(), L"");
 	}
 	return ping_level;
 }
 
-const string Condition::tokenDelims = "<=>";
+const wstring Condition::tokenDelims = L"<=>";
 
 // Implements the shunting-yard algorithm to evaluate condition expressions
 // Returns a vector of conditions in Reverse Polish Notation
@@ -716,7 +716,7 @@ void Condition::ProcessConditions(vector<Condition*> &inputConditions, vector<Co
 	}
 }
 
-void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
+void Condition::BuildConditions(vector<Condition*> &conditions, wstring token) {
 	vector<Condition*> endConditions;
 	int i;
 
@@ -725,11 +725,11 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 
 	// Look for syntax characters at the beginning of the token
 	for (i = 0; i < (int)token.length(); i++) {
-		if (token[i] == '!') {
+		if (token[i] == L'!') {
 			Condition::AddNonOperand(conditions, new NegationOperator());
-		} else if (token[i] == '(') {
+		} else if (token[i] == L'(') {
 			Condition::AddNonOperand(conditions, new LeftParen());
-		} else if (token[i] == ')') {
+		} else if (token[i] == L')') {
 			Condition::AddNonOperand(conditions, new RightParen());
 		} else {
 			break;
@@ -739,30 +739,30 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 
 	// Look for syntax characters at the end of the token
 	for (i = token.length() - 1; i >= 0; i--) {
-		if (token[i] == '!') {
+		if (token[i] == L'!') {
 			endConditions.insert(endConditions.begin(), new NegationOperator());
-		} else if (token[i] == '(') {
+		} else if (token[i] == L'(') {
 			endConditions.insert(endConditions.begin(), new LeftParen());
-		} else if (token[i] == ')') {
+		} else if (token[i] == L')') {
 			endConditions.insert(endConditions.begin(), new RightParen());
 		} else {
 			break;
 		}
 	}
 	if (i < (int)(token.length() - 1)) {
-		token.erase(i + 1, string::npos);
+		token.erase(i + 1, wstring::npos);
 	}
 
 	size_t delPos = token.find_first_of(tokenDelims);
-	string key;
-	string delim = "";
+	wstring key;
+	wstring delim = L"";
 	int value = 0;
-	if (delPos != string::npos) {
+	if (delPos != wstring::npos) {
 		key = Trim(token.substr(0, delPos));
 		delim = token.substr(delPos, 1);
-		string valueStr = Trim(token.substr(delPos + 1));
+		wstring valueStr = Trim(token.substr(delPos + 1));
 		if (valueStr.length() > 0) {
-			stringstream ss(valueStr);
+			wstringstream ss(valueStr);
 			if ((ss >> value).fail()) {
 				return;  // TODO: returning errors
 			}
@@ -773,316 +773,316 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 	BYTE operation = GetOperation(&delim);
 
 	unsigned int keylen = key.length();
-	if (key.compare(0, 3, "AND") == 0 || key.compare(0, 2, "&&") == 0) {
+	if (key.compare(0, 3, L"AND") == 0 || key.compare(0, 2, L"&&") == 0) {
 		Condition::AddNonOperand(conditions, new AndOperator());
-	} else if (key.compare(0, 2, "OR") == 0 || key.compare(0, 2, "||") == 0) {
+	} else if (key.compare(0, 2, L"OR") == 0 || key.compare(0, 2, L"||") == 0) {
 		Condition::AddNonOperand(conditions, new OrOperator());
 	} else if (keylen >= 3 && !(isupper(key[0]) || isupper(key[1]) || isupper(key[2]))) {
 		Condition::AddOperand(conditions, new ItemCodeCondition(key.substr(0, 3).c_str()));
-	} else if (key.find('+') != std::string::npos) {
+	} else if (key.find(L'+') != std::wstring::npos) {
 		Condition::AddOperand(conditions, new AddCondition(key, operation, value));
-	} else if (key.compare(0, 3, "ETH") == 0) {
+	} else if (key.compare(0, 3, L"ETH") == 0) {
 		Condition::AddOperand(conditions, new FlagsCondition(ITEM_ETHEREAL));
-	} else if (key.compare(0, 4, "SOCK") == 0) {
+	} else if (key.compare(0, 4, L"SOCK") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_SOCKETS, 0, operation, value));
-	} else if (key.compare(0, 3, "SET") == 0) {
+	} else if (key.compare(0, 3, L"SET") == 0) {
 		Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_SET));
-	} else if (key.compare(0, 3, "MAG") == 0) {
+	} else if (key.compare(0, 3, L"MAG") == 0) {
 		Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_MAGIC));
-	} else if (key.compare(0, 4, "RARE") == 0) {
+	} else if (key.compare(0, 4, L"RARE") == 0) {
 		Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_RARE));
-	} else if (key.compare(0, 3, "UNI") == 0) {
+	} else if (key.compare(0, 3, L"UNI") == 0) {
 		Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_UNIQUE));
-	} else if (key.compare(0, 9, "CRAFTALVL") == 0) {
+	} else if (key.compare(0, 9, L"CRAFTALVL") == 0) {
 		Condition::AddOperand(conditions, new CraftAffixLevelCondition(operation, value));
-	} else if (key.compare(0, 5, "CRAFT") == 0) {
+	} else if (key.compare(0, 5, L"CRAFT") == 0) {
 		Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_CRAFT));
-	} else if (key.compare(0, 2, "RW") == 0) {
+	} else if (key.compare(0, 2, L"RW") == 0) {
 		Condition::AddOperand(conditions, new FlagsCondition(ITEM_RUNEWORD));
-	} else if (key.compare(0, 4, "NMAG") == 0) {
+	} else if (key.compare(0, 4, L"NMAG") == 0) {
 		Condition::AddOperand(conditions, new NonMagicalCondition());
-	} else if (key.compare(0, 3, "SUP") == 0) {
+	} else if (key.compare(0, 3, L"SUP") == 0) {
 		Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_SUPERIOR));
-	} else if (key.compare(0, 3, "INF") == 0) {
+	} else if (key.compare(0, 3, L"INF") == 0) {
 		Condition::AddOperand(conditions, new QualityCondition(ITEM_QUALITY_INFERIOR));
-	} else if (key.compare(0, 4, "NORM") == 0) {
+	} else if (key.compare(0, 4, L"NORM") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_NORMAL));
-	} else if (key.compare(0, 3, "EXC") == 0) {
+	} else if (key.compare(0, 3, L"EXC") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_EXCEPTIONAL));
-	} else if (key.compare(0, 3, "ELT") == 0) {
+	} else if (key.compare(0, 3, L"ELT") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_ELITE));
-	} else if (key.compare(0, 2, "ID") == 0) {
+	} else if (key.compare(0, 2, L"ID") == 0) {
 		Condition::AddOperand(conditions, new FlagsCondition(ITEM_IDENTIFIED));
-	} else if (key.compare(0, 4, "ILVL") == 0) {
+	} else if (key.compare(0, 4, L"ILVL") == 0) {
 		Condition::AddOperand(conditions, new ItemLevelCondition(operation, value));
-	} else if (key.compare(0, 4, "QLVL") == 0) {
+	} else if (key.compare(0, 4, L"QLVL") == 0) {
 		Condition::AddOperand(conditions, new QualityLevelCondition(operation, value));
-	} else if (key.compare(0, 4, "ALVL") == 0) {
+	} else if (key.compare(0, 4, L"ALVL") == 0) {
 		Condition::AddOperand(conditions, new AffixLevelCondition(operation, value));
-	} else if (key.compare(0, 4, "CLVL") == 0) {
+	} else if (key.compare(0, 4, L"CLVL") == 0) {
 		Condition::AddOperand(conditions, new CharStatCondition(STAT_LEVEL, 0, operation, value));
-	} else if (key.compare(0, 7, "FILTLVL") == 0) {
+	} else if (key.compare(0, 7, L"FILTLVL") == 0) {
 		Condition::AddOperand(conditions, new FilterLevelCondition(operation, value));
-	} else if (key.compare(0, 4, "DIFF") == 0) {
+	} else if (key.compare(0, 4, L"DIFF") == 0) {
 		Condition::AddOperand(conditions, new DifficultyCondition(operation, value));
-	} else if (key.compare(0, 4, "RUNE") == 0) {
+	} else if (key.compare(0, 4, L"RUNE") == 0) {
 		Condition::AddOperand(conditions, new RuneCondition(operation, value));
-	} else if (key.compare(0, 4, "GOLD") == 0) {
+	} else if (key.compare(0, 4, L"GOLD") == 0) {
 		Condition::AddOperand(conditions, new GoldCondition(operation, value));
-	} else if (key.compare(0, 7, "GEMTYPE") == 0) {
+	} else if (key.compare(0, 7, L"GEMTYPE") == 0) {
 		Condition::AddOperand(conditions, new GemTypeCondition(operation, value));
-	} else if (key.compare(0, 3, "GEM") == 0) {
+	} else if (key.compare(0, 3, L"GEM") == 0) {
 		Condition::AddOperand(conditions, new GemLevelCondition(operation, value));
-	} else if (key.compare(0, 2, "ED") == 0) {
+	} else if (key.compare(0, 2, L"ED") == 0) {
 		Condition::AddOperand(conditions, new EDCondition(operation, value));
-	} else if (key.compare(0, 3, "DEF") == 0) {
+	} else if (key.compare(0, 3, L"DEF") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_DEFENSE, 0, operation, value));
-	} else if (key.compare(0, 6, "MAXDUR") == 0) {
+	} else if (key.compare(0, 6, L"MAXDUR") == 0) {
 		Condition::AddOperand(conditions, new DurabilityCondition(operation, value));
-	} else if (key.compare(0, 3, "RES") == 0) {
+	} else if (key.compare(0, 3, L"RES") == 0) {
 		Condition::AddOperand(conditions, new ResistAllCondition(operation, value));
-	} else if (key.compare(0, 4, "FRES") == 0) {
+	} else if (key.compare(0, 4, L"FRES") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_FIRERESIST, 0, operation, value));
-	} else if (key.compare(0, 4, "CRES") == 0) {
+	} else if (key.compare(0, 4, L"CRES") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_COLDRESIST, 0, operation, value));
-	} else if (key.compare(0, 4, "LRES") == 0) {
+	} else if (key.compare(0, 4, L"LRES") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_LIGHTNINGRESIST, 0, operation, value));
-	} else if (key.compare(0, 4, "PRES") == 0) {
+	} else if (key.compare(0, 4, L"PRES") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_POISONRESIST, 0, operation, value));
-	} else if (key.compare(0, 3, "IAS") == 0) {
+	} else if (key.compare(0, 3, L"IAS") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_IAS, 0, operation, value));
-	} else if (key.compare(0, 3, "FCR") == 0) {
+	} else if (key.compare(0, 3, L"FCR") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_FASTERCAST, 0, operation, value));
-	} else if (key.compare(0, 3, "FHR") == 0) {
+	} else if (key.compare(0, 3, L"FHR") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_FASTERHITRECOVERY, 0, operation, value));
-	} else if (key.compare(0, 3, "FBR") == 0) {
+	} else if (key.compare(0, 3, L"FBR") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_FASTERBLOCK, 0, operation, value));
-	} else if (key.compare(0, 4, "LIFE") == 0) {
+	} else if (key.compare(0, 4, L"LIFE") == 0) {
 		// For unknown reasons, the game's internal HP stat is 256 for every 1 displayed on item
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_MAXHP, 0, operation, value * 256));
-	} else if (key.compare(0, 4, "MANA") == 0) {
+	} else if (key.compare(0, 4, L"MANA") == 0) {
 		// For unknown reasons, the game's internal Mana stat is 256 for every 1 displayed on item
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_MAXMANA, 0, operation, value * 256));
-	} else if (key.compare(0, 6, "GOODSK") == 0) {
+	} else if (key.compare(0, 6, L"GOODSK") == 0) {
 		Condition::AddOperand(conditions, new SkillListCondition(operation, CLASS_SKILLS, value));
-	}else if (key.compare(0, 8, "GOODTBSK") == 0) {
+	}else if (key.compare(0, 8, L"GOODTBSK") == 0) {
 		Condition::AddOperand(conditions, new SkillListCondition(operation, CLASS_TAB_SKILLS, value));
-	} else if (key.compare(0, 5, "FOOLS") == 0) {
+	} else if (key.compare(0, 5, L"FOOLS") == 0) {
 		Condition::AddOperand(conditions, new FoolsCondition());
-	} else if (key.compare(0, 6, "LVLREQ") == 0) {
+	} else if (key.compare(0, 6, L"LVLREQ") == 0) {
 		Condition::AddOperand(conditions, new RequiredLevelCondition(operation, value));
-	} else if (key.compare(0, 5, "ARPER") == 0) {
+	} else if (key.compare(0, 5, L"ARPER") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_TOHITPERCENT, 0, operation, value));
-	} else if (key.compare(0, 5, "MFIND") == 0) {
+	} else if (key.compare(0, 5, L"MFIND") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_MAGICFIND, 0, operation, value));
-	} else if (key.compare(0, 5, "GFIND") == 0) {
+	} else if (key.compare(0, 5, L"GFIND") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_GOLDFIND, 0, operation, value));
-	} else if (key.compare(0, 3, "STR") == 0) {
+	} else if (key.compare(0, 3, L"STR") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_STRENGTH, 0, operation, value));
-	} else if (key.compare(0, 3, "DEX") == 0) {
+	} else if (key.compare(0, 3, L"DEX") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_DEXTERITY, 0, operation, value));
-	} else if (key.compare(0, 3, "FRW") == 0) {
+	} else if (key.compare(0, 3, L"FRW") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_FASTERRUNWALK, 0, operation, value));
-	} else if (key.compare(0, 6, "MINDMG") == 0) {
+	} else if (key.compare(0, 6, L"MINDMG") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_MINIMUMDAMAGE, 0, operation, value));
-	} else if (key.compare(0, 6, "MAXDMG") == 0) {
+	} else if (key.compare(0, 6, L"MAXDMG") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_MAXIMUMDAMAGE, 0, operation, value));
-	} else if (key.compare(0, 2, "AR") == 0 && keylen == 2) {
+	} else if (key.compare(0, 2, L"AR") == 0 && keylen == 2) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_ATTACKRATING, 0, operation, value));
-	} else if (key.compare(0, 3, "DTM") == 0) {
+	} else if (key.compare(0, 3, L"DTM") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_DAMAGETOMANA, 0, operation, value));
-	} else if (key.compare(0, 4, "MAEK") == 0) {
+	} else if (key.compare(0, 4, L"MAEK") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_MANAAFTEREACHKILL, 0, operation, value));
-	} else if (key.compare(0, 7, "REPLIFE") == 0) {
+	} else if (key.compare(0, 7, L"REPLIFE") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_REPLENISHLIFE, 0, operation, value));
-	} else if (key.compare(0, 8, "REPQUANT") == 0) {
+	} else if (key.compare(0, 8, L"REPQUANT") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_REPLENISHESQUANTITY, 0, operation, value));
-	} else if (key.compare(0, 6, "REPAIR") == 0) {
+	} else if (key.compare(0, 6, L"REPAIR") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_REPAIRSDURABILITY, 0, operation, value));
-	} else if (key.compare(0, 5, "ARMOR") == 0) {
+	} else if (key.compare(0, 5, L"ARMOR") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_ALLARMOR));
-	} else if (key.compare(0, 4, "BELT") == 0) {
+	} else if (key.compare(0, 4, L"BELT") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_BELT));
-	} else if (key.compare(0, 5, "CHEST") == 0) {
+	} else if (key.compare(0, 5, L"CHEST") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_ARMOR));
-	} else if (key.compare(0, 4, "HELM") == 0) {
+	} else if (key.compare(0, 4, L"HELM") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_HELM));
-	} else if (key.compare(0, 6, "SHIELD") == 0) {
+	} else if (key.compare(0, 6, L"SHIELD") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SHIELD));
-	} else if (key.compare(0, 6, "GLOVES") == 0) {
+	} else if (key.compare(0, 6, L"GLOVES") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_GLOVES));
-	} else if (key.compare(0, 5, "BOOTS") == 0) {
+	} else if (key.compare(0, 5, L"BOOTS") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_BOOTS));
-	} else if (key.compare(0, 4, "CIRC") == 0) {
+	} else if (key.compare(0, 4, L"CIRC") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_CIRCLET));
-	} else if (key.compare(0, 3, "DRU") == 0) {
+	} else if (key.compare(0, 3, L"DRU") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_DRUID_PELT));
-	} else if (key.compare(0, 3, "BAR") == 0) {
+	} else if (key.compare(0, 3, L"BAR") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_BARBARIAN_HELM));
-	} else if (key.compare(0, 3, "DIN") == 0) {
+	} else if (key.compare(0, 3, L"DIN") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_PALADIN_SHIELD));
-	} else if (key.compare(0, 3, "NEC") == 0) {
+	} else if (key.compare(0, 3, L"NEC") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_NECROMANCER_SHIELD));
-	} else if (key.compare(0, 3, "SIN") == 0) {
+	} else if (key.compare(0, 3, L"SIN") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_ASSASSIN_KATAR));
-	} else if (key.compare(0, 3, "SOR") == 0) {
+	} else if (key.compare(0, 3, L"SOR") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SORCERESS_ORB));
-	} else if (key.compare(0, 3, "ZON") == 0) {
+	} else if (key.compare(0, 3, L"ZON") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_AMAZON_WEAPON));
-	} else if (key.compare(0, 3, "AXE") == 0) {
+	} else if (key.compare(0, 3, L"AXE") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_AXE));
-	} else if (key.compare(0, 4, "MACE") == 0) {
+	} else if (key.compare(0, 4, L"MACE") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_MACE));
-	} else if (key.compare(0, 5, "SWORD") == 0) {
+	} else if (key.compare(0, 5, L"SWORD") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SWORD));
-	} else if (key.compare(0, 6, "DAGGER") == 0) {
+	} else if (key.compare(0, 6, L"DAGGER") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_DAGGER));
-	} else if (key.compare(0, 8, "THROWING") == 0) {
+	} else if (key.compare(0, 8, L"THROWING") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_THROWING));
-	} else if (key.compare(0, 3, "JAV") == 0) {
+	} else if (key.compare(0, 3, L"JAV") == 0) {
 		// Javelins don't seem to have ITEM_GROUP_JAVELIN set
 		// they are however, throwing spears
 		Condition::AddOperand(conditions,
 			new ItemGroupCondition(ITEM_GROUP_THROWING | ITEM_GROUP_SPEAR));
-	} else if (key.compare(0, 5, "SPEAR") == 0) {
+	} else if (key.compare(0, 5, L"SPEAR") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SPEAR));
-	} else if (key.compare(0, 7, "POLEARM") == 0) {
+	} else if (key.compare(0, 7, L"POLEARM") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_POLEARM));
-	} else if (key.compare(0, 3, "BOW") == 0) {
+	} else if (key.compare(0, 3, L"BOW") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_BOW));
-	} else if (key.compare(0, 4, "XBOW") == 0) {
+	} else if (key.compare(0, 4, L"XBOW") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_CROSSBOW));
-	} else if (key.compare(0, 5, "STAFF") == 0) {
+	} else if (key.compare(0, 5, L"STAFF") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_STAFF));
-	} else if (key.compare(0, 4, "WAND") == 0) {
+	} else if (key.compare(0, 4, L"WAND") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_WAND));
-	} else if (key.compare(0, 7, "SCEPTER") == 0) {
+	} else if (key.compare(0, 7, L"SCEPTER") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SCEPTER));
-	} else if (key.compare(0, 2, "EQ") == 0 && keylen == 3) {
-		if (key[2] == '1') {
+	} else if (key.compare(0, 2, L"EQ") == 0 && keylen == 3) {
+		if (key[2] == L'1') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_HELM));
-		} else if (key[2] == '2') {
+		} else if (key[2] == L'2') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_ARMOR));
-		} else if (key[2] == '3') {
+		} else if (key[2] == L'3') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SHIELD));
-		} else if (key[2] == '4') {
+		} else if (key[2] == L'4') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_GLOVES));
-		} else if (key[2] == '5') {
+		} else if (key[2] == L'5') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_BOOTS));
-		} else if (key[2] == '6') {
+		} else if (key[2] == L'6') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_BELT));
-		} else if (key[2] == '7') {
+		} else if (key[2] == L'7') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_CIRCLET));
 		}
-	} else if (key.compare(0, 2, "CL") == 0 && keylen == 3) {
-		if (key[2] == '1') {
+	} else if (key.compare(0, 2, L"CL") == 0 && keylen == 3) {
+		if (key[2] == L'1') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_DRUID_PELT));
-		} else if (key[2] == '2') {
+		} else if (key[2] == L'2') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_BARBARIAN_HELM));
-		} else if (key[2] == '3') {
+		} else if (key[2] == L'3') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_PALADIN_SHIELD));
-		} else if (key[2] == '4') {
+		} else if (key[2] == L'4') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_NECROMANCER_SHIELD));
-		} else if (key[2] == '5') {
+		} else if (key[2] == L'5') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_ASSASSIN_KATAR));
-		} else if (key[2] == '6') {
+		} else if (key[2] == L'6') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SORCERESS_ORB));
-		} else if (key[2] == '7') {
+		} else if (key[2] == L'7') {
 			Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_AMAZON_WEAPON));
 		}
-	} else if (key.compare(0, 6, "WEAPON") == 0) {
+	} else if (key.compare(0, 6, L"WEAPON") == 0) {
 		Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_ALLWEAPON));
-	} else if (key.compare(0, 2, "WP") == 0) {
+	} else if (key.compare(0, 2, L"WP") == 0) {
 		if (keylen >= 3) {
-			if (key[2] == '1') {
-				if (keylen >= 4 && key[3] == '0') {
+			if (key[2] == L'1') {
+				if (keylen >= 4 && key[3] == L'0') {
 					Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_CROSSBOW));
-				} else if (keylen >= 4 && key[3] == '1') {
+				} else if (keylen >= 4 && key[3] == L'1') {
 					Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_STAFF));
-				} else if (keylen >= 4 && key[3] == '2') {
+				} else if (keylen >= 4 && key[3] == L'2') {
 					Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_WAND));
-				} else if (keylen >= 4 && key[3] == '3') {
+				} else if (keylen >= 4 && key[3] == L'3') {
 					Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SCEPTER));
 				} else {
 					Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_AXE));
 				}
-			} else if (key[2] == '2') {
+			} else if (key[2] == L'2') {
 				Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_MACE));
-			} else if (key[2] == '3') {
+			} else if (key[2] == L'3') {
 				Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SWORD));
-			} else if (key[2] == '4') {
+			} else if (key[2] == L'4') {
 				Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_DAGGER));
-			} else if (key[2] == '5') {
+			} else if (key[2] == L'5') {
 				Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_THROWING));
-			} else if (key[2] == '6') {
+			} else if (key[2] == L'6') {
 				// Javelins don't seem to have ITEM_GROUP_JAVELIN set
 				// they are however, throwing spears
 				Condition::AddOperand(conditions,
 					new ItemGroupCondition(ITEM_GROUP_THROWING | ITEM_GROUP_SPEAR));
-			} else if (key[2] == '7') {
+			} else if (key[2] == L'7') {
 				Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_SPEAR));
-			} else if (key[2] == '8') {
+			} else if (key[2] == L'8') {
 				Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_POLEARM));
-			} else if (key[2] == '9') {
+			} else if (key[2] == L'9') {
 				Condition::AddOperand(conditions, new ItemGroupCondition(ITEM_GROUP_BOW));
 			}
 		}
-	} else if (key.compare(0, 2, "SK") == 0) {
+	} else if (key.compare(0, 2, L"SK") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(2));
+		wstringstream ss(key.substr(2));
 		if ((ss >> num).fail() || num < 0 || num > (int)SKILL_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_SINGLESKILL, num, operation, value));
-	} else if (key.compare(0, 2, "OS") == 0) {
+	} else if (key.compare(0, 2, L"OS") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(2));
+		wstringstream ss(key.substr(2));
 		if ((ss >> num).fail() || num < 0 || num > (int)SKILL_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_NONCLASSSKILL, num, operation, value));
-	} else if (key.compare(0, 4, "CHSK") == 0) { // skills granted by charges
+	} else if (key.compare(0, 4, L"CHSK") == 0) { // skills granted by charges
 		int num = -1;
-		stringstream ss(key.substr(4));
+		wstringstream ss(key.substr(4));
 		if ((ss >> num).fail() || num < 0 || num > (int)SKILL_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ChargedCondition(operation, num, value));
-	} else if (key.compare(0, 4, "CLSK") == 0) {
+	} else if (key.compare(0, 4, L"CLSK") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(4));
+		wstringstream ss(key.substr(4));
 		if ((ss >> num).fail() || num < 0 || num >= CLASS_NA) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_CLASSSKILLS, num, operation, value));
-	} else if (key.compare(0, 5, "ALLSK") == 0) {
+	} else if (key.compare(0, 5, L"ALLSK") == 0) {
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_ALLSKILLS, 0, operation, value));
-	} else if (key.compare(0, 5, "TABSK") == 0) {
+	} else if (key.compare(0, 5, L"TABSK") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(5));
+		wstringstream ss(key.substr(5));
 		if ((ss >> num).fail() || num < 0 || num > SKILLTAB_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(STAT_SKILLTAB, num, operation, value));
-	} else if (key.compare(0, 4, "STAT") == 0) {
+	} else if (key.compare(0, 4, L"STAT") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(4));
+		wstringstream ss(key.substr(4));
 		if ((ss >> num).fail() || num < 0 || num > (int)STAT_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new ItemStatCondition(num, 0, operation, value));
-	} else if (key.compare(0, 8, "CHARSTAT") == 0) {
+	} else if (key.compare(0, 8, L"CHARSTAT") == 0) {
 		int num = -1;
-		stringstream ss(key.substr(8));
+		wstringstream ss(key.substr(8));
 		if ((ss >> num).fail() || num < 0 || num > (int)STAT_MAX) {
 			return;
 		}
 		Condition::AddOperand(conditions, new CharStatCondition(num, 0, operation, value));
-	} else if (key.compare(0, 5, "MULTI") == 0) {
+	} else if (key.compare(0, 5, L"MULTI") == 0) {
 
-		std::regex multi_reg("([0-9]{1,10}),([0-9]{1,10})",
+		std::wregex multi_reg(L"([0-9]{1,10}),([0-9]{1,10})",
 			std::regex_constants::ECMAScript | std::regex_constants::icase);
-		std::smatch multi_match;
+		std::wsmatch multi_match;
 		if (std::regex_search(key, multi_match, multi_reg)) {
 			int stat1, stat2;
 			stat1 = stoi(multi_match[1].str(), nullptr, 10);
@@ -1091,7 +1091,7 @@ void Condition::BuildConditions(vector<Condition*> &conditions, string token) {
 			Condition::AddOperand(conditions, new ItemStatCondition(stat1, stat2, operation, value));
 		}
 
-	} else if (key.compare(0, 5, "PRICE") == 0) {
+	} else if (key.compare(0, 5, L"PRICE") == 0) {
 		Condition::AddOperand(conditions, new ItemPriceCondition(operation, value));
 	}
 
@@ -1246,7 +1246,7 @@ bool GemTypeCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *arg
 
 bool RuneCondition::EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1, Condition *arg2) {
 	if (IsRune(uInfo->attrs)) {
-		return IntegerCompare(RuneNumberFromItemCode(uInfo->itemCode), operation, runeNumber);
+		return IntegerCompare(RuneNumberFromItemCode(UnicodeToAnsi(uInfo->itemCode)), operation, runeNumber);
 	}
 	return false;
 }
@@ -1479,17 +1479,17 @@ void SkillListCondition::Init() {
 	goodTabSkills.clear();
 
 	// Build character skills list
-	BH::itemConfig->ReadAssoc("ClassSkillsList", skillList);
+	BH::itemConfig->ReadAssoc(L"ClassSkillsList", skillList);
 	for (auto it = skillList.cbegin(); it != skillList.cend(); it++) {
-		if (StringToBool((*it).second)) {
+		if (WStringToBool((*it).second)) {
 			goodClassSkills.push_back(stoi((*it).first));
 		}
 	}
 
 	// Build tab skills list
-	BH::itemConfig->ReadAssoc("TabSkillsList", classSkillList);
+	BH::itemConfig->ReadAssoc(L"TabSkillsList", classSkillList);
 	for (auto it = classSkillList.cbegin(); it != classSkillList.cend(); it++) {
-		if (StringToBool((*it).second)) {
+		if (WStringToBool((*it).second)) {
 			goodTabSkills.push_back(stoi((*it).first));
 		}
 	}
@@ -1625,7 +1625,7 @@ bool ResistAllCondition::EvaluateInternalFromPacket(ItemInfo *info, Condition *a
 
 void AddCondition::Init() {
 	codes.clear();
-	codes = split(key, '+');
+	codes = split(key, L'+');
 	for (auto code : codes) {
 		for (int j = 0; j < sizeof(skills) / sizeof(skills[0]); j++) {
 			if (code == skills[j].key)
@@ -1662,7 +1662,7 @@ int GetDefense(ItemInfo *item) {
 	return def;
 }
 
-void HandleUnknownItemCode(char *code, char *tag) {
+void HandleUnknownItemCode(wchar_t *code, wchar_t *tag) {
 	// If the MPQ files arent loaded yet then this is expected
 	if (!IsInitialized()){
 		return;

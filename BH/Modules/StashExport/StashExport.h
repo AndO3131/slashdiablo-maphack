@@ -19,7 +19,7 @@ class StashExport : public Module {
 private:
 
 	string dfltExprt;
-	map<string, string> mustaches;
+	map<wstring, wstring> mustaches;
 	unsigned int exportGear;
 	unsigned int exportType;
 	static UnitAny* viewingUnit;

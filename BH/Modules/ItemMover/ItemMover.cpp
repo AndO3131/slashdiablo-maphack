@@ -423,11 +423,11 @@ void ItemMover::OnRightClick(bool up, int x, int y, bool* block) {
 }
 
 void ItemMover::LoadConfig() {
-	BH::config->ReadKey("Use TP Tome", "VK_NUMPADADD", TpKey);
-	BH::config->ReadKey("Use Healing Potion", "VK_NUMPADMULTIPLY", HealKey);
-	BH::config->ReadKey("Use Mana Potion", "VK_NUMPADSUBTRACT", ManaKey);
+	BH::config->ReadKey(L"Use TP Tome", L"VK_NUMPADADD", TpKey);
+	BH::config->ReadKey(L"Use Healing Potion", L"VK_NUMPADMULTIPLY", HealKey);
+	BH::config->ReadKey(L"Use Mana Potion", L"VK_NUMPADSUBTRACT", ManaKey);
 
-	BH::config->ReadInt("Low TP Warning", tp_warn_quantity);
+	BH::config->ReadInt(L"Low TP Warning", tp_warn_quantity);
 }
 
 void ItemMover::OnLoad() {
@@ -782,7 +782,7 @@ void ParseItem(const unsigned char *data, ItemInfo *item, bool *success) {
 				item->earName.push_back(letter);
 			}
 			item->attrs = ItemAttributeMap[item->code];
-			item->name = item->attrs->name;
+			item->name = AnsiToUnicode(item->attrs->name.c_str());
 			item->width = item->attrs->width;
 			item->height = item->attrs->height;
 			//PrintText(1, "Ear packet: %s, %s, %d, %d", item->earName.c_str(), item->code, item->earClass, item->earLevel);
@@ -795,12 +795,12 @@ void ParseItem(const unsigned char *data, ItemInfo *item, bool *success) {
 		item->code[3] = 0;
 
 		if (ItemAttributeMap.find(item->code) == ItemAttributeMap.end()) {
-			HandleUnknownItemCode(item->code, "from packet");
+			HandleUnknownItemCode(AnsiToUnicode(item->code), L"from packet");
 			*success = false;
 			return;
 		}
 		item->attrs = ItemAttributeMap[item->code];
-		item->name = item->attrs->name;
+		item->name = AnsiToUnicode(item->attrs->name.c_str());
 		item->width = item->attrs->width;
 		item->height = item->attrs->height;
 

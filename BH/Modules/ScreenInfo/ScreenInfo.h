@@ -24,8 +24,8 @@ struct StateWarning {
 
 class ScreenInfo : public Module {
 	private:
-		map<string, string> SkillWarnings;
-		std::vector<std::string> automapInfo;
+		map<wstring, wstring> SkillWarnings;
+		std::vector<std::wstring> automapInfo;
 		std::map<DWORD, string> SkillWarningMap;
 		std::deque<StateWarning*> CurrentWarnings;
 		Drawing::Texthook* bhText;

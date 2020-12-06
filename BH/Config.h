@@ -29,9 +29,9 @@ enum ConfigType {
 class ConfigEntry {
 public:
 	ConfigType type;
-	std::string key;
-	std::string value;
-	std::string comment;
+	std::wstring key;
+	std::wstring value;
+	std::wstring comment;
 	int line;
 	void* pointer;
 	Toggle* toggle;
@@ -49,32 +49,32 @@ inline bool operator< (const ConfigEntry& lhs, const ConfigEntry& rhs) {
 class Config {
 private:
 	std::string configName;
-	std::map<std::string, ConfigEntry> contents;
-	vector<pair<string, string>> orderedKeyVals;
+	std::map<std::wstring, ConfigEntry> contents;
+	vector<pair<wstring, wstring>> orderedKeyVals;
 
-	static bool HasChanged(ConfigEntry entry, string& value);
-	static bool StringToBool(std::string input);
+	static bool HasChanged(ConfigEntry entry, wstring& value);
+	static bool StringToBool(std::wstring input);
 public:
 	Config(std::string name) : configName(name) {};
 
 	//Parse the config file and store results
 	bool Parse();
 	bool Write();
-	std::list<std::string> GetDefinedKeys();
+	std::list<std::wstring> GetDefinedKeys();
 
 	std::string GetConfigName();
 	void SetConfigName(std::string name);
 
 	//Functions to read values from the configuration
-	bool				ReadBoolean(std::string key, bool& value);
-	std::string			ReadString(std::string key, std::string& value);
-	int					ReadInt(std::string key, int& value);
-	unsigned int    	ReadInt(std::string key, unsigned int& value);
-	unsigned int		ReadKey(std::string key, std::string toggle, unsigned int &value);
-	Toggle				ReadToggle(std::string key, std::string toggle, bool defaultState, Toggle& value);
-	std::vector<string> ReadArray(std::string key, std::vector<string>& value);
-	map<string, string> ReadAssoc(std::string key, std::map<string, string>& value);
-	map<string, unsigned int> ReadAssoc(std::string key, std::map<string, unsigned int>& value);
-	map<string, bool> ReadAssoc(std::string key, std::map<string, bool>& value);
-	vector<pair<string, string>> ReadMapList(std::string key, vector<pair<string,string>>& value);
+	bool				ReadBoolean(std::wstring key, bool& value);
+	std::wstring			ReadString(std::wstring key, std::wstring& value);
+	int					ReadInt(std::wstring key, int& value);
+	unsigned int    	ReadInt(std::wstring key, unsigned int& value);
+	unsigned int		ReadKey(std::wstring key, std::wstring toggle, unsigned int &value);
+	Toggle				ReadToggle(std::wstring key, std::wstring toggle, bool defaultState, Toggle& value);
+	std::vector<wstring> ReadArray(std::wstring key, std::vector<wstring>& value);
+	map<wstring, wstring> ReadAssoc(std::wstring key, std::map<wstring, wstring>& value);
+	map<wstring, unsigned int> ReadAssoc(std::wstring key, std::map<wstring, unsigned int>& value);
+	map<wstring, bool> ReadAssoc(std::wstring key, std::map<wstring, bool>& value);
+	vector<pair<wstring, wstring>> ReadMapList(std::wstring key, vector<pair<wstring,wstring>>& value);
 };

@@ -63,22 +63,22 @@ void AutoTele::OnLoad() {
 }
 
 void AutoTele::LoadConfig() {
-	BH::config->ReadToggle("CP to cave", "None", false, Toggles["CP to cave"]);
-	BH::config->ReadToggle("Display Messages", "None", true, Toggles["Display Messages"]);
-	BH::config->ReadToggle("Draw Path", "None", true, Toggles["Draw Path"]);
-	BH::config->ReadToggle("Draw Destination", "None", true, Toggles["Draw Destination"]);
-	BH::config->ReadToggle("Fast Teleport", "None", true, Toggles["Fast Teleport"]);
-	BH::config->ReadToggle("Quest Drop Warning", "None", false, Toggles["Quest Drop Warning"]);
+	BH::config->ReadToggle(L"CP to cave", L"None", false, Toggles["CP to cave"]);
+	BH::config->ReadToggle(L"Display Messages", L"None", true, Toggles["Display Messages"]);
+	BH::config->ReadToggle(L"Draw Path", L"None", true, Toggles["Draw Path"]);
+	BH::config->ReadToggle(L"Draw Destination", L"None", true, Toggles["Draw Destination"]);
+	BH::config->ReadToggle(L"Fast Teleport", L"None", true, Toggles["Fast Teleport"]);
+	BH::config->ReadToggle(L"Quest Drop Warning", L"None", false, Toggles["Quest Drop Warning"]);
 
-	BH::config->ReadKey("Next Tele", "VK_NUMPAD0", NextKey);
-	BH::config->ReadKey("Other Tele", "VK_NUMPAD1", OtherKey);
-	BH::config->ReadKey("Waypoint Tele", "VK_NUMPAD2", WPKey);
-	BH::config->ReadKey("Prev Tele", "VK_NUMPAD3", PrevKey);
-	BH::config->ReadInt("Path Color", Colors[0]);
-	BH::config->ReadInt("Next Color", Colors[1]);
-	BH::config->ReadInt("Other Color", Colors[2]);
-	BH::config->ReadInt("WP Color", Colors[3]);
-	BH::config->ReadInt("Prev Color", Colors[4]);
+	BH::config->ReadKey(L"Next Tele", L"VK_NUMPAD0", NextKey);
+	BH::config->ReadKey(L"Other Tele", L"VK_NUMPAD1", OtherKey);
+	BH::config->ReadKey(L"Waypoint Tele", L"VK_NUMPAD2", WPKey);
+	BH::config->ReadKey(L"Prev Tele", L"VK_NUMPAD3", PrevKey);
+	BH::config->ReadInt(L"Path Color", Colors[0]);
+	BH::config->ReadInt(L"Next Color", Colors[1]);
+	BH::config->ReadInt(L"Other Color", Colors[2]);
+	BH::config->ReadInt(L"WP Color", Colors[3]);
+	BH::config->ReadInt(L"Prev Color", Colors[4]);
 }
 
 void AutoTele::OnAutomapDraw() {

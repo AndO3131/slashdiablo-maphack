@@ -28,14 +28,14 @@ DrawDirective automapDraw(true, 5);
 Maphack::Maphack() : Module("Maphack") {
 	revealType = MaphackRevealAct;
 	ResetRevealed();
-	missileColors["Player"] = 0x97;
-	missileColors["Neutral"] = 0x0A;
-	missileColors["Party"] = 0x84;
-	missileColors["Hostile"] = 0x5B;
-	monsterColors["Normal"] = 0x5B;
-	monsterColors["Minion"] = 0x60;
-	monsterColors["Champion"] = 0x91;
-	monsterColors["Boss"] = 0x84;
+	missileColors[L"Player"] = 0x97;
+	missileColors[L"Neutral"] = 0x0A;
+	missileColors[L"Party"] = 0x84;
+	missileColors[L"Hostile"] = 0x5B;
+	monsterColors[L"Normal"] = 0x5B;
+	monsterColors[L"Minion"] = 0x60;
+	monsterColors[L"Champion"] = 0x91;
+	monsterColors[L"Boss"] = 0x84;
 
 	monsterResistanceThreshold = 99;
 	lkLinesColor = 105;
@@ -53,16 +53,16 @@ void Maphack::LoadConfig() {
 }
 
 void Maphack::ReadConfig() {
-	BH::config->ReadInt("Reveal Mode", revealType);
-	BH::config->ReadInt("Show Monster Resistance", monsterResistanceThreshold);
-	BH::config->ReadInt("LK Chest Lines", lkLinesColor);
-	BH::config->ReadInt("Manaburn Monster Color", mbMonColor);
+	BH::config->ReadInt(L"Reveal Mode", revealType);
+	BH::config->ReadInt(L"Show Monster Resistance", monsterResistanceThreshold);
+	BH::config->ReadInt(L"LK Chest Lines", lkLinesColor);
+	BH::config->ReadInt(L"Manaburn Monster Color", mbMonColor);
 
-	BH::config->ReadKey("Reload Config", "VK_NUMPAD0", reloadConfig);
-	BH::config->ReadToggle("Show Settings", "VK_NUMPAD8", true, Toggles["Show Settings"]);
+	BH::config->ReadKey(L"Reload Config", L"VK_NUMPAD0", reloadConfig);
+	BH::config->ReadToggle(L"Show Settings", L"VK_NUMPAD8", true, Toggles["Show Settings"]);
 
-	BH::config->ReadAssoc("Missile Color", missileColors);
-	BH::config->ReadAssoc("Monster Color", monsterColors);
+	BH::config->ReadAssoc(L"Missile Color", missileColors);
+	BH::config->ReadAssoc(L"Monster Color", monsterColors);
 
 	TextColorMap["\377c0"] = 0x20;  // white
 	TextColorMap["\377c1"] = 0x0A;  // red
@@ -81,52 +81,52 @@ void Maphack::ReadConfig() {
 	TextColorMap["\377c\x09"] = 0xCB; // teal
 	TextColorMap["\377c\x0C"] = 0xD6; // light gray
 
-	BH::config->ReadAssoc("Monster Color", MonsterColors);
+	BH::config->ReadAssoc(L"Monster Color", MonsterColors);
 	for (auto it = MonsterColors.cbegin(); it != MonsterColors.cend(); it++) {
 		// If the key is a number, it means a monster we've assigned a specific color
 		int monsterId = -1;
-		stringstream ss((*it).first);
+		wstringstream ss((*it).first);
 		if ((ss >> monsterId).fail()) {
 			continue;
 		} else {
-			int monsterColor = StringToNumber((*it).second);
+			int monsterColor = WStringToNumber((*it).second);
 			automapMonsterColors[monsterId] = monsterColor;
 		}
 	}
 
-	BH::config->ReadAssoc("Super Unique Color", SuperUniqueColors);
+	BH::config->ReadAssoc(L"Super Unique Color", SuperUniqueColors);
 	for (auto it = SuperUniqueColors.cbegin(); it != SuperUniqueColors.cend(); it++) {
 		// If the key is a number, it means a monster we've assigned a specific color
 		int monsterId = -1;
-		stringstream ss((*it).first);
+		wstringstream ss((*it).first);
 		if ((ss >> monsterId).fail()) {
 			continue;
 		}
 		else {
-			int monsterColor = StringToNumber((*it).second);
+			int monsterColor = WStringToNumber((*it).second);
 			automapSuperUniqueColors[monsterId] = monsterColor;
 		}
 	}
 
 	
-	BH::config->ReadAssoc("Monster Line", MonsterLines);
+	BH::config->ReadAssoc(L"Monster Line", MonsterLines);
 	for (auto it = MonsterLines.cbegin(); it != MonsterLines.cend(); it++) {
 		// If the key is a number, it means a monster we've assigned a specific color
 		int monsterId = -1;
-		stringstream ss((*it).first);
+		wstringstream ss((*it).first);
 		if ((ss >> monsterId).fail()) {
 			continue;
 		} else {
-			int lineColor = StringToNumber((*it).second);
+			int lineColor = WStringToNumber((*it).second);
 			automapMonsterLines[monsterId] = lineColor;
 		}
 	}
 
-	BH::config->ReadAssoc("Monster Hide", MonsterHides);
+	BH::config->ReadAssoc(L"Monster Hide", MonsterHides);
 	for (auto it = MonsterHides.cbegin(); it != MonsterHides.cend(); it++) {
 		// If the key is a number, it means do not draw this monster on map
 		int monsterId = -1;
-		stringstream ss((*it).first);
+		wstringstream ss((*it).first);
 		if ((ss >> monsterId).fail()) {
 			continue;
 		} else {
@@ -134,21 +134,21 @@ void Maphack::ReadConfig() {
 		}
 	}
 
-	BH::config->ReadToggle("Reveal Map", "None", true, Toggles["Auto Reveal"]);
-	BH::config->ReadToggle("Show Monsters", "None", true, Toggles["Show Monsters"]);
-	BH::config->ReadToggle("Show Missiles", "None", true, Toggles["Show Missiles"]);
-	BH::config->ReadToggle("Show Chests", "None", true, Toggles["Show Chests"]);
-	BH::config->ReadToggle("Force Light Radius", "None", true, Toggles["Force Light Radius"]);
-	BH::config->ReadToggle("Remove Weather", "None", true, Toggles["Remove Weather"]);
-	BH::config->ReadToggle("Infravision", "None", true, Toggles["Infravision"]);
-	BH::config->ReadToggle("Remove Shake", "None", false, Toggles["Remove Shake"]);
-	BH::config->ReadToggle("Display Level Names", "None", true, Toggles["Display Level Names"]);
-	BH::config->ReadToggle("Monster Resistances", "None", true, Toggles["Monster Resistances"]);
-	BH::config->ReadToggle("Monster Enchantments", "None", true, Toggles["Monster Enchantments"]);
-	BH::config->ReadToggle("Apply CPU Patch", "None", true, Toggles["Apply CPU Patch"]);
-	BH::config->ReadToggle("Apply FPS Patch", "None", true, Toggles["Apply FPS Patch"]);
+	BH::config->ReadToggle(L"Reveal Map", L"None", true, Toggles["Auto Reveal"]);
+	BH::config->ReadToggle(L"Show Monsters", L"None", true, Toggles["Show Monsters"]);
+	BH::config->ReadToggle(L"Show Missiles", L"None", true, Toggles["Show Missiles"]);
+	BH::config->ReadToggle(L"Show Chests", L"None", true, Toggles["Show Chests"]);
+	BH::config->ReadToggle(L"Force Light Radius", L"None", true, Toggles["Force Light Radius"]);
+	BH::config->ReadToggle(L"Remove Weather", L"None", true, Toggles["Remove Weather"]);
+	BH::config->ReadToggle(L"Infravision", L"None", true, Toggles["Infravision"]);
+	BH::config->ReadToggle(L"Remove Shake", L"None", false, Toggles["Remove Shake"]);
+	BH::config->ReadToggle(L"Display Level Names", L"None", true, Toggles["Display Level Names"]);
+	BH::config->ReadToggle(L"Monster Resistances", L"None", true, Toggles["Monster Resistances"]);
+	BH::config->ReadToggle(L"Monster Enchantments", L"None", true, Toggles["Monster Enchantments"]);
+	BH::config->ReadToggle(L"Apply CPU Patch", L"None", true, Toggles["Apply CPU Patch"]);
+	BH::config->ReadToggle(L"Apply FPS Patch", L"None", true, Toggles["Apply FPS Patch"]);
 
-	BH::config->ReadInt("Minimap Max Ghost", automapDraw.maxGhost);
+	BH::config->ReadInt(L"Minimap Max Ghost", automapDraw.maxGhost);
 }
 
 void Maphack::ResetRevealed() {
@@ -252,17 +252,17 @@ void Maphack::OnLoad() {
 
 	new Texthook(settingsTab, col2_x + 5, 3, "Missile Colors");
 
-	new Colorhook(settingsTab, col2_x, 17, &missileColors["Player"], "Player");
-	new Colorhook(settingsTab, col2_x, 32, &missileColors["Neutral"], "Neutral");
-	new Colorhook(settingsTab, col2_x, 47, &missileColors["Party"], "Party");
-	new Colorhook(settingsTab, col2_x, 62, &missileColors["Hostile"], "Hostile");
+	new Colorhook(settingsTab, col2_x, 17, &missileColors[L"Player"], "Player");
+	new Colorhook(settingsTab, col2_x, 32, &missileColors[L"Neutral"], "Neutral");
+	new Colorhook(settingsTab, col2_x, 47, &missileColors[L"Party"], "Party");
+	new Colorhook(settingsTab, col2_x, 62, &missileColors[L"Hostile"], "Hostile");
 
 	new Texthook(settingsTab, col2_x + 5, 77, "Monster Colors");
 
-	new Colorhook(settingsTab, col2_x, 92, &monsterColors["Normal"], "Normal");
-	new Colorhook(settingsTab, col2_x, 107, &monsterColors["Minion"], "Minion");
-	new Colorhook(settingsTab, col2_x, 122, &monsterColors["Champion"], "Champion");
-	new Colorhook(settingsTab, col2_x, 137, &monsterColors["Boss"], "Boss");
+	new Colorhook(settingsTab, col2_x, 92, &monsterColors[L"Normal"], "Normal");
+	new Colorhook(settingsTab, col2_x, 107, &monsterColors[L"Minion"], "Minion");
+	new Colorhook(settingsTab, col2_x, 122, &monsterColors[L"Champion"], "Champion");
+	new Colorhook(settingsTab, col2_x, 137, &monsterColors[L"Boss"], "Boss");
 
 	new Texthook(settingsTab, 6, (Y += 15), "Reveal Type:");
 
@@ -369,8 +369,8 @@ void Maphack::OnDraw() {
 				uInfo.itemCode[1] = D2COMMON_GetItemText(unit->dwTxtFileNo)->szCode[1];
 				uInfo.itemCode[2] = D2COMMON_GetItemText(unit->dwTxtFileNo)->szCode[2];
 				uInfo.itemCode[3] = 0;
-				if (ItemAttributeMap.find(uInfo.itemCode) != ItemAttributeMap.end()) {
-					uInfo.attrs = ItemAttributeMap[uInfo.itemCode];
+				if (ItemAttributeMap.find(UnicodeToAnsi(uInfo.itemCode)) != ItemAttributeMap.end()) {
+					uInfo.attrs = ItemAttributeMap[UnicodeToAnsi(uInfo.itemCode)];
 					vector<Action> actions = map_action_cache.Get(&uInfo);
 					for (auto &action : actions) {
 						if (action.colorOnMap != UNDEFINED_COLOR ||
@@ -432,13 +432,13 @@ void Maphack::OnAutomapDraw() {
 				// Draw monster on automap
 				if (unit->dwType == UNIT_MONSTER && IsValidMonster(unit) && Toggles["Show Monsters"].state) {
 					int lineColor = -1;
-					int color = monsterColors["Normal"];
+					int color = monsterColors[L"Normal"];
 					if (unit->pMonsterData->fBoss)
-						color = monsterColors["Boss"];
+						color = monsterColors[L"Boss"];
 					if (unit->pMonsterData->fChamp)
-						color = monsterColors["Champion"];
+						color = monsterColors[L"Champion"];
 					if (unit->pMonsterData->fMinion)
-						color = monsterColors["Minion"];
+						color = monsterColors[L"Minion"];
 					//Cow king pack
 					if (unit->dwTxtFileNo == 391 &&
 							unit->pMonsterData->anEnchants[0] == ENCH_MAGIC_RESISTANT &&
@@ -532,16 +532,16 @@ void Maphack::OnAutomapDraw() {
 						continue;
 						break;
 					case 1://Me
-						color = missileColors["Player"];
+						color = missileColors[L"Player"];
 						break;
 					case 2://Neutral
-						color = missileColors["Neutral"];
+						color = missileColors[L"Neutral"];
 						break;
 					case 3://Partied
-						color = missileColors["Party"];
+						color = missileColors[L"Party"];
 						break;
 					case 4://Hostile
-						color = missileColors["Hostile"];
+						color = missileColors[L"Hostile"];
 						break;
 					}
 
@@ -560,8 +560,8 @@ void Maphack::OnAutomapDraw() {
 					uInfo.itemCode[1] = D2COMMON_GetItemText(unit->dwTxtFileNo)->szCode[1];
 					uInfo.itemCode[2] = D2COMMON_GetItemText(unit->dwTxtFileNo)->szCode[2];
 					uInfo.itemCode[3] = 0;
-					if (ItemAttributeMap.find(uInfo.itemCode) != ItemAttributeMap.end()) {
-						uInfo.attrs = ItemAttributeMap[uInfo.itemCode];
+					if (ItemAttributeMap.find(UnicodeToAnsi(uInfo.itemCode)) != ItemAttributeMap.end()) {
+						uInfo.attrs = ItemAttributeMap[UnicodeToAnsi(uInfo.itemCode)];
 						const vector<Action> actions = map_action_cache.Get(&uInfo);
 						for (auto &action : actions) {
 							// skip action if the ping level requirement isn't met
@@ -593,7 +593,7 @@ void Maphack::OnAutomapDraw() {
 						}
 					}
 					else {
-						HandleUnknownItemCode(uInfo.itemCode, "on map");
+						HandleUnknownItemCode(uInfo.itemCode, L"on map");
 					}
 				}
 				else if (unit->dwType == UNIT_OBJECT && !unit->dwMode /* Not opened */ && Toggles["Show Chests"].state && IsObjectChest(unit->pObjectData->pTxt)) {

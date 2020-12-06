@@ -45,7 +45,7 @@ struct ItemProperty {
 // Collection of item data from the internal UnitAny structure
 struct UnitItemInfo {
 	UnitAny *item;
-	char itemCode[4];
+	wchar_t itemCode[4];
 	ItemAttributes *attrs;
 };
 
@@ -54,9 +54,9 @@ struct ItemInfo {
 	ItemAttributes *attrs;
 	char code[4];
 	//std::string packet;
-	std::string name;
-	std::string earName;
-	std::string personalizedName;
+	std::wstring name;
+	std::wstring earName;
+	std::wstring personalizedName;
 	unsigned int id;
 	unsigned int x;
 	unsigned int y;
@@ -119,7 +119,7 @@ struct ItemInfo {
 
 ItemAttributes ItemAttributeList[];
 StatProperties StatPropertiesList[];
-extern std::map<std::string, int> UnknownItemCodes;
+extern std::map<std::wstring, int> UnknownItemCodes;
 
 enum ConditionType {
 	CT_None,
@@ -136,8 +136,8 @@ public:
 	Condition() {}
 	virtual ~Condition() {}
 
-	static const string tokenDelims;
-	static void BuildConditions(vector<Condition*> &conditions, string token);
+	static const wstring tokenDelims;
+	static void BuildConditions(vector<Condition*> &conditions, wstring token);
 	static void ProcessConditions(vector<Condition*> &rawConditions, vector<Condition*> &processedConditions);
 	static void AddOperand(vector<Condition*> &conditions, Condition *cond);
 	static void AddNonOperand(vector<Condition*> &conditions, Condition *cond);
@@ -216,7 +216,7 @@ private:
 class ItemCodeCondition : public Condition
 {
 public:
-	ItemCodeCondition(const char *code) {
+	ItemCodeCondition(const wchar_t *code) {
 		targetCode[0] = code[0];
 		targetCode[1] = code[1];
 		targetCode[2] = code[2];
@@ -224,7 +224,7 @@ public:
 		conditionType = CT_Operand;
 	};
 private:
-	char targetCode[4];
+	wchar_t targetCode[4];
 	bool EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1, Condition *arg2);
 	bool EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Condition *arg2);
 };
@@ -422,8 +422,8 @@ private:
 	BYTE operation;
 	unsigned int type;
 	unsigned int targetStat;
-	std::map<string, string> classSkillList;
-	std::map<string, string> skillList;
+	std::map<wstring, wstring> classSkillList;
+	std::map<wstring, wstring> skillList;
 	vector<unsigned int> goodClassSkills;
 	vector<unsigned int> goodTabSkills;
 	void Init();
@@ -511,16 +511,16 @@ private:
 class AddCondition : public Condition
 {
 public:
-	AddCondition(string& k, BYTE op, unsigned int target) : key(k), operation(op), targetStat(target) { 
+	AddCondition(wstring& k, BYTE op, unsigned int target) : key(k), operation(op), targetStat(target) { 
 		conditionType = CT_Operand;
 		Init();
 	};
 private:
 	BYTE operation;
-	vector<string> codes;
+	vector<wstring> codes;
 	vector<DWORD> stats;
 	unsigned int targetStat;
-	string key;
+	wstring key;
 	void Init();
 	bool EvaluateInternal(UnitItemInfo *uInfo, Condition *arg1, Condition *arg2);
 	bool EvaluateInternalFromPacket(ItemInfo *info, Condition *arg1, Condition *arg2);
@@ -530,24 +530,24 @@ extern TrueCondition *trueCondition;
 extern FalseCondition *falseCondition;
 
 struct ActionReplace {
-	string key;
-	string value;
+	wstring key;
+	wstring value;
 };
 
 struct ColorReplace {
-	string key;
+	wstring key;
 	int value;
 };
 
 struct SkillReplace {
-	string key;
+	wstring key;
 	int value;
 };
 
 struct Action {
 	bool stopProcessing;
-	string name;
-	string description;
+	wstring name;
+	wstring description;
 	int colorOnMap;
 	int borderColor;
 	int dotColor;
@@ -564,8 +564,8 @@ struct Action {
 		notifyColor(UNDEFINED_COLOR),
 		pingLevel(0),
 		stopProcessing(true),
-		name(""),
-		description("") {}
+		name(L""),
+		description(L"") {}
 };
 
 struct Rule {
@@ -573,7 +573,7 @@ struct Rule {
 	Action action;
 	vector<Condition*> conditionStack;
 
-	Rule(vector<Condition*> &inputConditions, string *str);
+	Rule(vector<Condition*> &inputConditions, wstring *str);
 
 	// TODO: Should this really be defined in the header? This will force it to be inlined AFAIK. -ybd
 	// Evaluate conditions which are in Reverse Polish Notation
@@ -627,27 +627,27 @@ struct Rule {
 	}
 };
 
-class ItemDescLookupCache : public RuleLookupCache<string> {
-	string make_cached_T(UnitItemInfo *uInfo) override;
-	string to_str(const string &name) override;
+class ItemDescLookupCache : public RuleLookupCache<wstring> {
+	wstring make_cached_T(UnitItemInfo *uInfo) override;
+	wstring to_str(const wstring &name) override;
 
 		public:
 		ItemDescLookupCache(const std::vector<Rule*> &RuleList) :
-			RuleLookupCache<string>(RuleList) {}
+			RuleLookupCache<wstring>(RuleList) {}
 };
 
-class ItemNameLookupCache : public RuleLookupCache<string, const string &> {
-	string make_cached_T(UnitItemInfo *uInfo, const string &name) override;
-	string to_str(const string &name) override;
+class ItemNameLookupCache : public RuleLookupCache<wstring, const wstring &> {
+	wstring make_cached_T(UnitItemInfo *uInfo, const wstring &name) override;
+	wstring to_str(const wstring &name) override;
 
 		public:
 		ItemNameLookupCache(const std::vector<Rule*> &RuleList) :
-			RuleLookupCache<string, const string&>(RuleList) {}
+			RuleLookupCache<wstring, const wstring&>(RuleList) {}
 };
 
 class MapActionLookupCache : public RuleLookupCache<vector<Action>> {
 	vector<Action> make_cached_T(UnitItemInfo *uInfo) override;
-	string to_str(const vector<Action> &actions);
+	wstring to_str(const vector<Action> &actions);
 
 		public:
 		MapActionLookupCache(const std::vector<Rule*> &RuleList) :
@@ -656,7 +656,7 @@ class MapActionLookupCache : public RuleLookupCache<vector<Action>> {
 
 class IgnoreLookupCache : public RuleLookupCache<bool> {
 	bool make_cached_T(UnitItemInfo *uInfo) override;
-	string to_str(const bool &ignore);
+	wstring to_str(const bool &ignore);
 
 		public:
 		IgnoreLookupCache(const std::vector<Rule*> &RuleList) :
@@ -669,7 +669,7 @@ extern vector<Rule*> DescRuleList;
 extern vector<Rule*> MapRuleList;
 extern vector<Rule*> DoNotBlockRuleList;
 extern vector<Rule*> IgnoreRuleList;
-extern vector<pair<string, string>> rules;
+extern vector<pair<wstring, wstring>> rules;
 extern ItemDescLookupCache item_desc_cache;
 extern ItemNameLookupCache item_name_cache;
 extern MapActionLookupCache map_action_cache;
@@ -681,15 +681,15 @@ namespace ItemDisplay {
 	void UninitializeItemRules();
 }
 StatProperties *GetStatProperties(unsigned int stat);
-void BuildAction(string *str, Action *act);
-string ParseDescription(Action *act);
-int ParsePingLevel(Action *act, const string& reg_string);
-int ParseMapColor(Action *act, const string& reg_string);
-void HandleUnknownItemCode(char *code, char *tag);
-BYTE GetOperation(string *op);
+void BuildAction(wstring *str, Action *act);
+wstring ParseDescription(Action *act);
+int ParsePingLevel(Action *act, const wstring& reg_string);
+int ParseMapColor(Action *act, const wstring& reg_string);
+void HandleUnknownItemCode(wchar_t *code, wchar_t *tag);
+BYTE GetOperation(wstring *op);
 inline bool IntegerCompare(unsigned int Lvalue, int operation, unsigned int Rvalue);
-void GetItemName(UnitItemInfo *uInfo, string &name);
-void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const string &action_name);
+void GetItemName(UnitItemInfo *uInfo, wstring &name);
+void SubstituteNameVariables(UnitItemInfo *uInfo, wstring &name, const wstring &action_name);
 int GetDefense(ItemInfo *item);
 BYTE GetAffixLevel(BYTE ilvl, BYTE qlvl, BYTE mlvl);
 BYTE GetRequiredLevel(UnitAny* item);

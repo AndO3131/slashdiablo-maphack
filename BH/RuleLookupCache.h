@@ -18,9 +18,9 @@ class RuleLookupCache {
 	protected:
 	const std::vector<Rule*> &RuleList;
 	virtual T make_cached_T(UnitItemInfo *uInfo, Args&&... pack) = 0;
-	virtual std::string to_str(const T &cached_T) {
+	virtual std::wstring to_str(const T &cached_T) {
 		// This function only needs to be implemented for debug printing
-		return std::string("???");
+		return std::wstring(L"???");
 	}
 
 	public:

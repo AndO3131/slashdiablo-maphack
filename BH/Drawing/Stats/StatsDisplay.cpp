@@ -23,7 +23,7 @@ StatsDisplay::StatsDisplay(std::string name) {
 	SetActive(true);
 	SetMinimized(true);
 
-	BH::config->ReadKey("Character Stats", "VK_8", statsKey);
+	BH::config->ReadKey(L"Character Stats", L"VK_8", statsKey);
 	display = this;
 }
 
@@ -41,22 +41,22 @@ void StatsDisplay::LoadConfig(){
 	int height = 342 + 8 * 3 + 16 * 5;
 	customStats.clear();
 
-	BH::config->ReadToggle("Stats on Right", "None", false, Toggles["Stats on Right"]);
+	BH::config->ReadToggle(L"Stats on Right", L"None", false, Toggles["Stats on Right"]);
 
-	vector<pair<string, string>> stats;
-	BH::config->ReadMapList("Stat Screen", stats);
+	vector<pair<wstring, wstring>> stats;
+	BH::config->ReadMapList(L"Stat Screen", stats);
 	for (unsigned int i = 0; i < stats.size(); i++) {
 		std::transform(stats[i].first.begin(), stats[i].first.end(), stats[i].first.begin(), ::tolower);
-		if (StatMap.count(stats[i].first) > 0) {
-			StatProperties *sp = StatMap[stats[i].first];
+		if (StatMap.count(UnicodeToAnsi(stats[i].first.c_str())) > 0) {
+			StatProperties *sp = StatMap[UnicodeToAnsi(stats[i].first.c_str())];
 			DisplayedStat *customStat = new DisplayedStat();
-			customStat->name = stats[i].first;
+			customStat->name = UnicodeToAnsi(stats[i].first.c_str());
 			customStat->useValue = false;
 			std::transform(customStat->name.begin(), customStat->name.end(), customStat->name.begin(), ::tolower);
 			// Getting rid of the check for sp->saveParamBits > 0 to display weapon mastery values
 			// if a param is supplied it will be used
 			int num = -1;
-			stringstream ss(Trim(stats[i].second));
+			wstringstream ss(Trim(stats[i].second));
 			if (!(ss >> num).fail() && num > 0) {
 				customStat->useValue = true;
 				customStat->value = num;

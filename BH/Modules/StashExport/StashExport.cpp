@@ -32,19 +32,19 @@ void StashExport::OnLoad() {
 	options.clear();
 	options.push_back("json");
 
-	BH::config->ReadAssoc("Mustache", mustaches);
-	BH::config->ReadString("Mustache Default", dfltExprt);
+	BH::config->ReadAssoc(L"Mustache", mustaches);
+	BH::config->ReadString(L"Mustache Default", wstring(AnsiToUnicode(dfltExprt.c_str())));
 	int idx = 0;
 
 	for (auto it = mustaches.cbegin(); it != mustaches.cend(); it++){
-		auto t = Mustache::parse(it->second);
+		auto t = Mustache::parse(UnicodeToAnsi(it->second.c_str()));
 		if (t){
 			idx++;
-			if (dfltExprt.compare(it->first) == 0){
+			if (dfltExprt.compare(UnicodeToAnsi(it->first.c_str())) == 0){
 				exportType = idx;
 			}
-			MustacheTemplates[it->first] = std::unique_ptr<Mustache::AMustacheTemplate>(t);
-			options.push_back(it->first);
+			MustacheTemplates[UnicodeToAnsi(it->first.c_str())] = std::unique_ptr<Mustache::AMustacheTemplate>(t);
+			options.push_back(UnicodeToAnsi(it->first.c_str()));
 		}
 	}
 
@@ -52,12 +52,12 @@ void StashExport::OnLoad() {
 }
 
 void StashExport::LoadConfig() {
-	BH::config->ReadToggle("Include Equipment", "None", true, Toggles["Include Equipment"]);
-	BH::config->ReadToggle("Include Fixed Stats", "None", false, Toggles["Include Fixed Stats"]);
-	BH::config->ReadToggle("Condense Stats", "None", true, Toggles["Condense Stats"]);
-	BH::config->ReadToggle("Export On Menu", "None", false, Toggles["Export On Menu"]);
+	BH::config->ReadToggle(L"Include Equipment", L"None", true, Toggles["Include Equipment"]);
+	BH::config->ReadToggle(L"Include Fixed Stats", L"None", false, Toggles["Include Fixed Stats"]);
+	BH::config->ReadToggle(L"Condense Stats", L"None", true, Toggles["Condense Stats"]);
+	BH::config->ReadToggle(L"Export On Menu", L"None", false, Toggles["Export On Menu"]);
 
-	BH::config->ReadKey("Export Gear", "VK_NUMPAD5", exportGear);
+	BH::config->ReadKey(L"Export Gear", L"VK_NUMPAD5", exportGear);
 }
 
 void StashExport::OnUnload() {

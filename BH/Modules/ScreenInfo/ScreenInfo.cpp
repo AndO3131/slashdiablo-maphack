@@ -31,17 +31,17 @@ void ScreenInfo::OnLoad() {
 }
 
 void ScreenInfo::LoadConfig() {
-	BH::config->ReadToggle("Experience Meter", "VK_NUMPAD7", false, Toggles["Experience Meter"]);
+	BH::config->ReadToggle(L"Experience Meter", L"VK_NUMPAD7", false, Toggles["Experience Meter"]);
 
-	BH::config->ReadArray("AutomapInfo", automapInfo);
+	BH::config->ReadArray(L"AutomapInfo", automapInfo);
 
-	BH::config->ReadAssoc("Skill Warning", SkillWarnings);
+	BH::config->ReadAssoc(L"Skill Warning", SkillWarnings);
 	SkillWarningMap.clear();
 	for (auto it = SkillWarnings.cbegin(); it != SkillWarnings.cend(); it++) {
-		if (StringToBool((*it).second)) {
+		if (WStringToBool((*it).second)) {
 			// If the key is a number, it means warn when that state expires
 			DWORD stateId = 0;
-			stringstream ss((*it).first);
+			wstringstream ss((*it).first);
 			if (!(ss >> stateId).fail()) {
 				SkillWarningMap[stateId] = GetStateCode(stateId).name;
 			}
@@ -299,16 +299,16 @@ void ScreenInfo::OnAutomapDraw() {
 		{"REALTIME", szTime}
 	};
 
-	for (vector<string>::iterator it = automapInfo.begin(); it < automapInfo.end(); it++) {
-		string key;
+	for (vector<wstring>::iterator it = automapInfo.begin(); it < automapInfo.end(); it++) {
+		wstring key;
 		key.assign(*it);
 		for (int n = 0; n < sizeof(automap) / sizeof(automap[0]); n++) {
-			if (key.find("%" + automap[n].key + "%") == string::npos)
+			if (key.find(L"%" + wstring(AnsiToUnicode(automap[n].key.c_str())) + L"%") == wstring::npos)
 				continue;
 			if (automap[n].value.length() == 0)
-				key = "";
+				key = L"";
 			else
-				key.replace(key.find("%" + automap[n].key + "%"), automap[n].key.length() + 2, automap[n].value);
+				key.replace(key.find(L"%" + wstring(AnsiToUnicode(automap[n].key.c_str())) + L"%"), automap[n].key.length() + 2, AnsiToUnicode(automap[n].value.c_str()));
 		}
 		if (key.length() > 0) {
 			Texthook::Draw(*p_D2CLIENT_ScreenSizeX - 10, y, Right,0,Gold,"%s", key.c_str());
