@@ -1,4 +1,4 @@
-#include "Config.h"
+﻿#include "Config.h"
 #include "BH.h"
 #include <algorithm>
 #include <sstream>
@@ -15,8 +15,8 @@ bool Config::Parse() {
 		return false;
 
 	//Open the configuration file
-	wifstream file(BH::path + configName, wifstream::binary);
-	file.imbue(locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>));
+	ifstream file(BH::path + configName);// , wifstream::binary);
+	//file.imbue(locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>));
 	if (!file.is_open())
 		return false;
 
@@ -25,15 +25,15 @@ bool Config::Parse() {
 	orderedKeyVals.clear();
 
 	//Begin to loop the configuration file one line at a time.
-	std::wstring line;
+	std::string line;
 	int lineNo = 0;
 	while (std::getline(file, line)) {
 		lineNo++;
 		std::wstring comment;
 		//Remove any comments from the config
-		if (line.find(L"//") != wstring::npos) {
-			comment = line.substr(line.find(L"//"));
-			line = line.erase(line.find(L"//"));
+		if (line.find("//") != string::npos) {
+			comment = AnsiToUnicode(line.substr(line.find("//")).c_str());
+			line = line.erase(line.find("//"));
 		}
 
 		//Insure we have something in the line now.
@@ -44,10 +44,10 @@ bool Config::Parse() {
 
 		ConfigEntry entry;
 		entry.line = lineNo;
-		entry.key = Trim(line.substr(0, line.find_first_of(L":")));
-		entry.value = Trim(line.substr(line.find_first_of(L":") + 1));
+		entry.key = Trim(AnsiToUnicode(line.substr(0, line.find_first_of(":")).c_str()));
+		entry.value = Trim(AnsiToUnicode(line.substr(line.find_first_of(":") + 1).c_str()));
 
-		entry.comment = line.substr(line.find_first_of(L":") + 1, line.find(entry.value) - line.find_first_of(L":") - 1);
+		entry.comment = AnsiToUnicode(line.substr(line.find_first_of(":") + 1, line.find(UnicodeToAnsi(entry.value.c_str())) - line.find_first_of(":") - 1).c_str());
 		entry.pointer = NULL;
 
 		//Store them!
@@ -63,8 +63,9 @@ bool Config::Write() {
 	if (configName.length() == 0)
 		return false;
 
+	/*
 	//Open the configuration file
-	wfstream file(BH::path + configName, wfstream::binary);
+	wifstream file(BH::path + configName, wifstream::binary);
 	file.imbue(locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>));
 	if (!file.is_open())
 		return false;
@@ -77,7 +78,7 @@ bool Config::Write() {
 		configLines.push_back(line);
 	}
 	file.close();
-
+	
 	map<ConfigEntry, wstring> changed;
 	for (map<wstring, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); ++it) {
 		wstring newValue;
@@ -88,10 +89,11 @@ bool Config::Write() {
 		change.second = newValue.c_str();
 		changed.insert(change);
 	}
-
+	
 	if (changed.size() == 0)
 		return true;
-
+	*/
+	/*
 	for (vector<wstring>::iterator it = configLines.begin(); it < configLines.end(); it++) {
 		//Remove any comments from the config
 		wstring comment;
@@ -140,18 +142,19 @@ bool Config::Write() {
 
 		configLines.push_back(newConfig.str());
 	}
+	*/
+	ofstream outFile(BH::path + configName + "1");// , wofstream::out | wofstream::binary);
+	//outFile.imbue(locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>));
+	outFile << UnicodeToAnsi(L"//I was hereąęćśźżńł\n미묘한 모습을 보여\n顯示符文");// 
+	/*for (vector<wstring>::iterator it = configLines.begin(); it < configLines.end(); it++) {
+	if ((*it).compare(L"//Purge") == 0)
+	continue;
 
-	wofstream outFile(BH::path + configName, wofstream::binary);
-	file.imbue(locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>));
-	for (vector<wstring>::iterator it = configLines.begin(); it < configLines.end(); it++) {
-		if ((*it).compare(L"//Purge") == 0)
-			continue;
-
-		if (std::next(it) == configLines.end())
-			outFile << (*it);
-		else
-			outFile << (*it) << endl;
-	}
+	if (std::next(it) == configLines.end())
+	outFile << (*it);
+	else
+	outFile << (*it) << endl;
+	}*/
 	outFile.close();
 
 	return true;
