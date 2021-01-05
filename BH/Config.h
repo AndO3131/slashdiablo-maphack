@@ -52,7 +52,7 @@ private:
 	std::map<std::wstring, ConfigEntry> contents;
 	vector<pair<wstring, wstring>> orderedKeyVals;
 
-	static bool HasChanged(ConfigEntry entry, wstring& value);
+	static bool HasChanged(ConfigEntry entry, string& value);
 	static bool StringToBool(std::wstring input);
 public:
 	Config(std::string name) : configName(name) {};

@@ -63,28 +63,27 @@ bool Config::Write() {
 	if (configName.length() == 0)
 		return false;
 
-	/*
+	
 	//Open the configuration file
-	wifstream file(BH::path + configName, wifstream::binary);
-	file.imbue(locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>));
+	fstream file(BH::path + configName);
 	if (!file.is_open())
 		return false;
 
 	//Read in the configuration value
-	vector<wstring> configLines;
-	wchar_t line[2048];
+	vector<string> configLines;
+	char line[2048];
 	while (!file.eof()) {
 		file.getline(line, 2048);
 		configLines.push_back(line);
 	}
 	file.close();
 	
-	map<ConfigEntry, wstring> changed;
+	map<ConfigEntry, string> changed;
 	for (map<wstring, ConfigEntry>::iterator it = contents.begin(); it != contents.end(); ++it) {
-		wstring newValue;
+		string newValue;
 		if (!HasChanged((*it).second, newValue))
 			continue;
-		pair<ConfigEntry, wstring> change;
+		pair<ConfigEntry, string> change;
 		change.first = (*it).second;
 		change.second = newValue.c_str();
 		changed.insert(change);
@@ -92,14 +91,14 @@ bool Config::Write() {
 	
 	if (changed.size() == 0)
 		return true;
-	*/
-	/*
-	for (vector<wstring>::iterator it = configLines.begin(); it < configLines.end(); it++) {
+	
+	
+	for (vector<string>::iterator it = configLines.begin(); it < configLines.end(); it++) {
 		//Remove any comments from the config
-		wstring comment;
-		if ((*it).find_first_of(L"//") != wstring::npos) {
-			comment = (*it).substr((*it).find_first_of(L"//"));
-			(*it) = (*it).erase((*it).find_first_of(L"//"));
+		string comment;
+		if ((*it).find_first_of("//") != string::npos) {
+			comment = (*it).substr((*it).find_first_of("//"));
+			(*it) = (*it).erase((*it).find_first_of("//"));
 		}
 
 		//Insure we have something in the line now.
@@ -108,53 +107,51 @@ bool Config::Write() {
 			continue;
 		}
 
-		wstring key = Trim((*it).substr(0, (*it).find_first_of(L":")));
+		string key = Trim((*it).substr(0, (*it).find_first_of(":")));
 		*it = *it + comment;
 
-		for (map<ConfigEntry, wstring>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
+		for (map<ConfigEntry, string>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
 		{
-			if ((*cit).first.key.compare(key) != 0)
+			if ((*cit).first.key.compare(AnsiToUnicode(key.c_str())) != 0)
 				continue;
 
 			if ((*cit).second.size() == 0)
 			{
-				*it = L"//Purge";
-				contents[key].value = L"";
+				*it = "//Purge";
+				contents[AnsiToUnicode(key.c_str())].value = L"";
 				changed.erase((*cit).first);
 				break;
 			}
 
-			wstringstream newLine;
-			newLine << key << L":" << (*cit).first.comment << (*cit).second << comment;
+			stringstream newLine;
+			newLine << key << ":" << UnicodeToAnsi((*cit).first.comment.c_str()) << (*cit).second << comment;
 			*it = newLine.str();
-			contents[key].value = (*cit).second;
+			contents[AnsiToUnicode(key.c_str())].value = AnsiToUnicode((*cit).second.c_str());
 
 			changed.erase((*cit).first);
 			break;
 		}
 	}
 
-	for (map<ConfigEntry, wstring>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
+	for (map<ConfigEntry, string>::iterator cit = changed.begin(); cit != changed.end(); ++cit)
 	{
-		wstringstream newConfig;
+		stringstream newConfig;
 
-		newConfig << (*cit).first.key << L": " << (*cit).second;
+		newConfig << UnicodeToAnsi((*cit).first.key.c_str()) << ": " << (*cit).second;
 
 		configLines.push_back(newConfig.str());
 	}
-	*/
-	ofstream outFile(BH::path + configName + "1");// , wofstream::out | wofstream::binary);
-	//outFile.imbue(locale(file.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::little_endian>));
-	outFile << UnicodeToAnsi(L"//I was hereąęćśźżńł\n미묘한 모습을 보여\n顯示符文");// 
-	/*for (vector<wstring>::iterator it = configLines.begin(); it < configLines.end(); it++) {
-	if ((*it).compare(L"//Purge") == 0)
-	continue;
+	
+	ofstream outFile(BH::path + configName + "1");
+	for (vector<string>::iterator it = configLines.begin(); it < configLines.end(); it++) {
+		if ((*it).compare("//Purge") == 0)
+			continue;
 
-	if (std::next(it) == configLines.end())
-	outFile << (*it);
-	else
-	outFile << (*it) << endl;
-	}*/
+		if (std::next(it) == configLines.end())
+			outFile << (*it);
+		else
+			outFile << (*it) << endl;
+	}
 	outFile.close();
 
 	return true;
@@ -428,7 +425,7 @@ list<wstring> Config::GetDefinedKeys() {
 	return ret;
 }
 
-bool Config::HasChanged(ConfigEntry entry, wstring& value) {
+bool Config::HasChanged(ConfigEntry entry, string& value) {
 	if (entry.type != CTToggle && entry.pointer == NULL)
 		return false;
 
@@ -440,14 +437,14 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 		if (storedBool == currentBool)
 			return false;
 
-		value = currentBool ? L"True" : L"False";
+		value = currentBool ? "True" : "False";
 		return true;
 	}
 	case CTInt: {
 		int currentInt = *((int*)entry.pointer);
 
 		int storedInt = 0;
-		std::wstringstream stream;
+		std::stringstream stream;
 		bool hex = false;
 		if (entry.value.find(L"0x") != wstring::npos) {
 			from_wstring<int>(storedInt, entry.value, std::hex);
@@ -462,16 +459,16 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 			return false;
 
 		stream << currentInt;
-		value = ((hex) ? L"0x" : L"") + stream.str();
+		value = ((hex) ? "0x" : "") + stream.str();
 		return true;
 	}
 	case CTString: {
-		wstring currentString = *((wstring*)entry.pointer);
+//		wstring currentString = *((wstring*)entry.pointer);
 
-		if (currentString.compare(entry.value) == 0)
-			return false;
+//		if (currentString.compare(entry.value) == 0)
+//			return false;
 
-		value = currentString;
+//		value = UnicodeToAnsi(currentString.c_str());
 		return true;
 	}
 	case CTArray: {
@@ -480,7 +477,7 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 		int index = _wtoi(ind.c_str());
 
 		if (index >= valTest.size()) {
-			value = L"";
+			value = "";
 			return true;
 		}
 
@@ -489,7 +486,7 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 		if (currentString.compare(entry.value) == 0)
 			return false;
 
-		value = currentString;
+		value = UnicodeToAnsi(currentString.c_str());
 		return true;
 	}
 
@@ -502,7 +499,7 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 		if (currentString.compare(entry.value) == 0)
 			return false;
 
-		value = currentString;
+		value = UnicodeToAnsi(currentString.c_str());
 		return true;
 	}
 	case CTAssocBool: {
@@ -515,7 +512,7 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 		if (currentBool == StringToBool(entry.value))
 			return false;
 
-		value = currentBool ? L"True" : L"False";
+		value = currentBool ? "True" : "False";
 		return true;
 	}
 	case CTAssocInt: {
@@ -524,7 +521,7 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 		int currentInt = valTest[assocKey];
 
 		int storedInt = 0;
-		std::wstringstream stream;
+		std::stringstream stream;
 		bool hex = false;
 		if (entry.value.find(L"0x") != wstring::npos) {
 			from_wstring<int>(storedInt, entry.value, std::hex);
@@ -539,7 +536,7 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 			return false;
 
 		stream << currentInt;
-		value = ((hex) ? L"0x" : L"") + stream.str();
+		value = ((hex) ? "0x" : "") + stream.str();
 		return true;
 	}
 	case CTToggle: {
@@ -549,10 +546,10 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 		if (entry.toggle->toggle == toggle && entry.toggle->state == state)
 			return false;
 
-		wstringstream stream;
+		stringstream stream;
 		KeyCode newKey = GetKeyCode(entry.toggle->toggle);
 
-		stream << ((entry.toggle->state) ? L"True" : L"False") << L", " << AnsiToUnicode(newKey.name.c_str());
+		stream << ((entry.toggle->state) ? "True" : "False") << ", " << newKey.name;
 
 		value = stream.str();
 		return true;
@@ -565,7 +562,7 @@ bool Config::HasChanged(ConfigEntry entry, wstring& value) {
 			return false;
 
 		KeyCode newCode = GetKeyCode(currentKey);
-		value = AnsiToUnicode(newCode.name.c_str());
+		value = newCode.name;
 		return true;
 	}
 	}
