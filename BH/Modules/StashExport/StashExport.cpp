@@ -33,14 +33,14 @@ void StashExport::OnLoad() {
 	options.push_back("json");
 
 	BH::config->ReadAssoc(L"Mustache", mustaches);
-	BH::config->ReadString(L"Mustache Default", wstring(AnsiToUnicode(dfltExprt.c_str())));
+	BH::config->ReadString(L"Mustache Default", dfltExprt);
 	int idx = 0;
 
 	for (auto it = mustaches.cbegin(); it != mustaches.cend(); it++){
 		auto t = Mustache::parse(UnicodeToAnsi(it->second.c_str()));
 		if (t){
 			idx++;
-			if (dfltExprt.compare(UnicodeToAnsi(it->first.c_str())) == 0){
+			if (dfltExprt.compare(it->first) == 0){
 				exportType = idx;
 			}
 			MustacheTemplates[UnicodeToAnsi(it->first.c_str())] = std::unique_ptr<Mustache::AMustacheTemplate>(t);

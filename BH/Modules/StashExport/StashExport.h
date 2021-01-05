@@ -18,7 +18,7 @@ struct IdNamePair{
 class StashExport : public Module {
 private:
 
-	string dfltExprt;
+	wstring dfltExprt;
 	map<wstring, wstring> mustaches;
 	unsigned int exportGear;
 	unsigned int exportType;
@@ -31,7 +31,7 @@ public:
 	static map<std::string, Toggle> Toggles;
 	static map<std::string, std::unique_ptr<Mustache::AMustacheTemplate>> MustacheTemplates;
 
-	StashExport() : Module("StashExport"), exportType(0) { dfltExprt = "json"; };
+	StashExport() : Module("StashExport"), exportType(0) { dfltExprt = L"json"; };
 
 	void OnLoad();
 	void OnUnload();

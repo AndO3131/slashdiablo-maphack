@@ -142,7 +142,7 @@ bool Config::Write() {
 		configLines.push_back(newConfig.str());
 	}
 	
-	ofstream outFile(BH::path + configName + "1");
+	ofstream outFile(BH::path + configName);
 	for (vector<string>::iterator it = configLines.begin(); it < configLines.end(); it++) {
 		if ((*it).compare("//Purge") == 0)
 			continue;
@@ -463,12 +463,12 @@ bool Config::HasChanged(ConfigEntry entry, string& value) {
 		return true;
 	}
 	case CTString: {
-//		wstring currentString = *((wstring*)entry.pointer);
+		wstring currentString = *((wstring*)entry.pointer);
 
-//		if (currentString.compare(entry.value) == 0)
-//			return false;
+		if (currentString.compare(entry.value) == 0)
+			return false;
 
-//		value = UnicodeToAnsi(currentString.c_str());
+		value = UnicodeToAnsi(currentString.c_str());
 		return true;
 	}
 	case CTArray: {
