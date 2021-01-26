@@ -16,22 +16,22 @@
 
 // All colors here must also be defined in MAP_COLOR_REPLACEMENTS
 #define COLOR_REPLACEMENTS	\
-	{L"WHITE", L"ÿc0"},		\
-	{L"RED", L"ÿc1"},			\
-	{L"GREEN", L"ÿc2"},		\
-	{L"BLUE", L"ÿc3"},		\
-	{L"GOLD", L"ÿc4"},		\
-	{L"GRAY", L"ÿc5"},		\
-	{L"BLACK", L"ÿc6"},		\
-	{L"TAN", L"ÿc7"},			\
-	{L"ORANGE", L"ÿc8"},		\
-	{L"YELLOW", L"ÿc9"},		\
-	{L"PURPLE", L"ÿc;"},		\
-	{L"DARK_GREEN", L"ÿc:"},	\
-	{L"CORAL", L"\xFF" L"c\x06"},		\
-	{L"SAGE", L"\xFF" L"c\x07"},		\
-	{L"TEAL", L"\xFF" L"c\x09"},		\
-	{L"LIGHT_GRAY", L"\xFF" L"c\x0C"}
+	{L"WHITE", "ÿc0"},		\
+	{L"RED", "ÿc1"},			\
+	{L"GREEN", "ÿc2"},		\
+	{L"BLUE", "ÿc3"},		\
+	{L"GOLD", "ÿc4"},		\
+	{L"GRAY", "ÿc5"},		\
+	{L"BLACK", "ÿc6"},		\
+	{L"TAN", "ÿc7"},			\
+	{L"ORANGE", "ÿc8"},		\
+	{L"YELLOW", "ÿc9"},		\
+	{L"PURPLE", "ÿc;"},		\
+	{L"DARK_GREEN", "ÿc:"},	\
+	{L"CORAL", "\xFF" "c\x06"},		\
+	{L"SAGE", "\xFF" "c\x07"},		\
+	{L"TEAL", "\xFF" "c\x09"},		\
+	{L"LIGHT_GRAY", "\xFF" "c\x0C"}
 
 #define MAP_COLOR_WHITE     0x20
 
@@ -164,7 +164,7 @@ BYTE RuneNumberFromItemCode(char *code){
 
 // Find the item description. This code is called only when there's a cache miss
 wstring ItemDescLookupCache::make_cached_T(UnitItemInfo *uInfo) {
-	wstring new_name;
+	string new_name;
 	for (vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
 		if ((*it)->Evaluate(uInfo, NULL)) {
 			SubstituteNameVariables(uInfo, new_name, (*it)->action.description);
@@ -173,7 +173,7 @@ wstring ItemDescLookupCache::make_cached_T(UnitItemInfo *uInfo) {
 			}
 		}
 	}
-	return new_name;
+	return AnsiToUnicode(new_name.c_str());
 }
 
 wstring ItemDescLookupCache::to_str(const wstring &name) {
@@ -191,7 +191,7 @@ wstring ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const wstring &n
 	wstring new_name(name);
 	for (vector<Rule*>::const_iterator it = this->RuleList.begin(); it != this->RuleList.end(); it++) {
 		if ((*it)->Evaluate(uInfo, NULL)) {
-			SubstituteNameVariables(uInfo, new_name, (*it)->action.name);
+			SubstituteNameVariables(uInfo, (string)UnicodeToAnsi(new_name.c_str()), (*it)->action.name);
 			if ((*it)->action.stopProcessing) {
 				break;
 			}
@@ -272,10 +272,10 @@ void GetItemName(UnitItemInfo *uInfo, wstring &name) {
 	name.assign(new_name);
 }
 
-void SubstituteNameVariables(UnitItemInfo *uInfo, wstring &name, const wstring &action_name) {
-	wchar_t origName[128], sockets[4], code[4], ilvl[4], alvl[4], craft_alvl[4], runename[16] = L"", runenum[4] = L"0";
-	wchar_t gemtype[16] = L"", gemlevel[16] = L"", sellValue[16] = L"", statVal[16] = L"";
-	wchar_t lvlreq[4], wpnspd[4], rangeadder[4];
+void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const wstring &action_name) {
+	char origName[128], sockets[4], code[4], ilvl[4], alvl[4], craft_alvl[4], runename[16] = "", runenum[4] = "0";
+	char gemtype[16] = "", gemlevel[16] = "", sellValue[16] = "", statVal[16] = "";
+	char lvlreq[4], wpnspd[4], rangeadder[4];
 
 	UnitAny *item = uInfo->item;
 	ItemText *txt = D2COMMON_GetItemText(item->dwTxtFileNo);
@@ -287,27 +287,27 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, wstring &name, const wstring &
 	auto ilvl_int = item->pItemData->dwItemLevel;
 	auto alvl_int = GetAffixLevel((BYTE)item->pItemData->dwItemLevel, (BYTE)uInfo->attrs->qualityLevel, uInfo->attrs->magicLevel);
 	auto clvl_int = D2COMMON_GetUnitStat(D2CLIENT_GetPlayerUnit(), STAT_LEVEL, 0); 
-	swprintf_s(sockets, L"%d", D2COMMON_GetUnitStat(item, STAT_SOCKETS, 0));
-	swprintf_s(ilvl, L"%d", ilvl_int);
-	swprintf_s(alvl, L"%d", alvl_int);
-	swprintf_s(craft_alvl, L"%d", GetAffixLevel((BYTE)(ilvl_int/2+clvl_int/2), (BYTE)uInfo->attrs->qualityLevel, uInfo->attrs->magicLevel));
-	swprintf_s(origName, L"%s", name.c_str());
+	printf_s(sockets, "%d", D2COMMON_GetUnitStat(item, STAT_SOCKETS, 0));
+	printf_s(ilvl, "%d", ilvl_int);
+	printf_s(alvl, "%d", alvl_int);
+	printf_s(craft_alvl, "%d", GetAffixLevel((BYTE)(ilvl_int/2+clvl_int/2), (BYTE)uInfo->attrs->qualityLevel, uInfo->attrs->magicLevel));
+	printf_s(origName, "%s", name.c_str());
 
-	swprintf_s(lvlreq, L"%d", GetRequiredLevel(uInfo->item));
-	swprintf_s(wpnspd, L"%d", txt->speed); //Add these as matchable stats too, maybe?
-	swprintf_s(rangeadder, L"%d", txt->rangeadder);
+	printf_s(lvlreq, "%d", GetRequiredLevel(uInfo->item));
+	printf_s(wpnspd, "%d", txt->speed); //Add these as matchable stats too, maybe?
+	printf_s(rangeadder, "%d", txt->rangeadder);
 
 	UnitAny* pUnit = D2CLIENT_GetPlayerUnit();
 	if (pUnit && txt->fQuest == 0) {
-		swprintf_s(sellValue, L"%d", D2COMMON_GetItemPrice(pUnit, item, D2CLIENT_GetDifficulty(), (DWORD)D2CLIENT_GetQuestInfo(), 0x201, 1));
+		printf_s(sellValue, "%d", D2COMMON_GetItemPrice(pUnit, item, D2CLIENT_GetDifficulty(), (DWORD)D2CLIENT_GetQuestInfo(), 0x201, 1));
 	}
 
 	if (IsRune(uInfo->attrs)) {
-		swprintf_s(runenum, L"%d", RuneNumberFromItemCode(UnicodeToAnsi(code)));
-		swprintf_s(runename, name.substr(0, name.find(' ')).c_str());
+		printf_s(runenum, "%d", RuneNumberFromItemCode(code));
+		printf_s(runename, name.substr(0, name.find(' ')).c_str());
 	} else if (IsGem(uInfo->attrs)) {
-		swprintf_s(gemlevel, L"%s", GetGemLevelString(GetGemLevel(uInfo->attrs)));
-		swprintf_s(gemtype, L"%s", GetGemTypeString(GetGemType(uInfo->attrs)));
+		printf_s(gemlevel, "%s", GetGemLevelString(GetGemLevel(uInfo->attrs)));
+		printf_s(gemtype, "%s", GetGemTypeString(GetGemType(uInfo->attrs)));
 	}
 	ActionReplace replacements[] = {
 		{L"NAME", origName},
@@ -323,35 +323,35 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, wstring &name, const wstring &
 		{L"WPNSPD", wpnspd},
 		{L"RANGE", rangeadder},
 		{L"CODE", code},
-		{L"NL", L"\n"},
+		{L"NL", "\n"},
 		{L"PRICE", sellValue},
 		COLOR_REPLACEMENTS
 	};
-	name.assign(action_name);
+	name.assign(UnicodeToAnsi(action_name.c_str()));
 	for (int n = 0; n < sizeof(replacements) / sizeof(replacements[0]); n++) {
 
 		// Revert to non-glide colors here
 		if (*p_D2GFX_VideoMode != VIDEO_MODE_GLIDE) {
 			if (replacements[n].key == L"CORAL") {
-				replacements[n].value = L"\377c1"; // red
+				replacements[n].value = "\377c1"; // red
 			} else if (replacements[n].key == L"SAGE") {
-				replacements[n].value = L"\377c2"; // green
+				replacements[n].value = "\377c2"; // green
 			} else if (replacements[n].key == L"TEAL") {
-				replacements[n].value = L"\377c3"; // blue
+				replacements[n].value = "\377c3"; // blue
 			} else if (replacements[n].key == L"LIGHT_GRAY") {
-				replacements[n].value = L"\377c5"; // gray
+				replacements[n].value = "\377c5"; // gray
 			}
 		}
 		
-		while (name.find(L"%" + replacements[n].key + L"%") != wstring::npos) {
-			name.replace(name.find(L"%" + replacements[n].key + L"%"), replacements[n].key.length() + 2, replacements[n].value);
+		while (name.find("%" + (string)UnicodeToAnsi(replacements[n].key.c_str()) + "%") != string::npos) {
+			name.replace(name.find("%" + (string)UnicodeToAnsi(replacements[n].key.c_str()) + "%"), replacements[n].key.length() + 2, replacements[n].value);
 		}
 	}
 
 	// stat replacements
-	if (name.find(L"%STAT-") != wstring::npos) {
-		std::wregex stat_reg(L"%STAT-([0-9]{1,4})%", std::regex_constants::ECMAScript);
-		std::wsmatch stat_match;
+	if (name.find("%STAT-") != string::npos) {
+		std::regex stat_reg("%STAT-([0-9]{1,4})%", std::regex_constants::ECMAScript);
+		std::smatch stat_match;
 
 		while (std::regex_search(name, stat_match, stat_reg)) {
 			int stat = stoi(stat_match[1].str(), nullptr, 10);
@@ -361,7 +361,7 @@ void SubstituteNameVariables(UnitItemInfo *uInfo, wstring &name, const wstring &
 				// Hp and mana need adjusting
 				if (stat == 7 || stat == 9)
 					value /= 256;
-				swprintf_s(statVal, L"%d", value);
+				printf_s(statVal, "%d", value);
 			}
 			name.replace(
 					stat_match.prefix().length(),

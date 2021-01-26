@@ -649,7 +649,7 @@ void __stdcall Item::OnProperties(wchar_t * wTxt)
 			auto chars_written = MultiByteToWideChar(CODE_PAGE, MB_PRECOMPOSED, UnicodeToAnsi(desc.c_str()), -1, wDesc, 128);
 			swprintf_s(wTxt + aLen, MAXLEN - aLen,
 				L"%s%s\n",
-				(chars_written > 0) ? wDesc : L"\377c1 Descirption string too long!",
+				(chars_written > 0) ? wDesc : L"\377c1 Description string too long!",
 				GetColorCode(TextColor::White).c_str());
 		}
 	}

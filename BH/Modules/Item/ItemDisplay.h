@@ -531,7 +531,7 @@ extern FalseCondition *falseCondition;
 
 struct ActionReplace {
 	wstring key;
-	wstring value;
+	string value;
 };
 
 struct ColorReplace {
@@ -689,7 +689,7 @@ void HandleUnknownItemCode(wchar_t *code, wchar_t *tag);
 BYTE GetOperation(wstring *op);
 inline bool IntegerCompare(unsigned int Lvalue, int operation, unsigned int Rvalue);
 void GetItemName(UnitItemInfo *uInfo, wstring &name);
-void SubstituteNameVariables(UnitItemInfo *uInfo, wstring &name, const wstring &action_name);
+void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const wstring &action_name);
 int GetDefense(ItemInfo *item);
 BYTE GetAffixLevel(BYTE ilvl, BYTE qlvl, BYTE mlvl);
 BYTE GetRequiredLevel(UnitAny* item);
