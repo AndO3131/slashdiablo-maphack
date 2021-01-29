@@ -222,7 +222,7 @@ wstring ItemNameLookupCache::make_cached_T(UnitItemInfo *uInfo, const wstring &n
 wstring ItemNameLookupCache::to_str(const wstring &name) {
 	size_t start_pos = 0;
 	std::wstring itemName(name);
-	while ((start_pos = itemName.find('\n', start_pos)) != std::string::npos) {
+	while ((start_pos = itemName.find(L'\n', start_pos)) != std::wstring::npos) {
 		itemName.replace(start_pos, 1, L" - ");
 		start_pos += 3;
 	}
