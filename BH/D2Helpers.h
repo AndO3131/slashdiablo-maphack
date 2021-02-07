@@ -26,7 +26,7 @@ bool RunTo(WORD x, WORD y);
 bool Interact(DWORD UnitId, DWORD UnitType);
 
 std::string GetItemCode(int dwTxtFileNo);
-std::string GetItemName(UnitAny* item);
+std::wstring GetItemName(UnitAny* item);
 bool IsTown(DWORD levelId);
 
 bool IsGameReady();

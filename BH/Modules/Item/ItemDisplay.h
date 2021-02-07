@@ -627,27 +627,27 @@ struct Rule {
 	}
 };
 
-class ItemDescLookupCache : public RuleLookupCache<wstring> {
-	wstring make_cached_T(UnitItemInfo *uInfo) override;
-	wstring to_str(const wstring &name) override;
+class ItemDescLookupCache : public RuleLookupCache<string> {
+	string make_cached_T(UnitItemInfo *uInfo) override;
+	string to_str(const string &name) override;
 
 		public:
 		ItemDescLookupCache(const std::vector<Rule*> &RuleList) :
-			RuleLookupCache<wstring>(RuleList) {}
+			RuleLookupCache<string>(RuleList) {}
 };
 
-class ItemNameLookupCache : public RuleLookupCache<wstring, const wstring &> {
-	wstring make_cached_T(UnitItemInfo *uInfo, const wstring &name) override;
-	wstring to_str(const wstring &name) override;
+class ItemNameLookupCache : public RuleLookupCache<string, const string &> {
+	string make_cached_T(UnitItemInfo *uInfo, const string &name) override;
+	string to_str(const string &name) override;
 
 		public:
 		ItemNameLookupCache(const std::vector<Rule*> &RuleList) :
-			RuleLookupCache<wstring, const wstring&>(RuleList) {}
+			RuleLookupCache<string, const string&>(RuleList) {}
 };
 
 class MapActionLookupCache : public RuleLookupCache<vector<Action>> {
 	vector<Action> make_cached_T(UnitItemInfo *uInfo) override;
-	wstring to_str(const vector<Action> &actions);
+	string to_str(const vector<Action> &actions);
 
 		public:
 		MapActionLookupCache(const std::vector<Rule*> &RuleList) :
@@ -656,7 +656,7 @@ class MapActionLookupCache : public RuleLookupCache<vector<Action>> {
 
 class IgnoreLookupCache : public RuleLookupCache<bool> {
 	bool make_cached_T(UnitItemInfo *uInfo) override;
-	wstring to_str(const bool &ignore);
+	string to_str(const bool &ignore);
 
 		public:
 		IgnoreLookupCache(const std::vector<Rule*> &RuleList) :
@@ -688,9 +688,10 @@ int ParseMapColor(Action *act, const wstring& reg_string);
 void HandleUnknownItemCode(wchar_t *code, wchar_t *tag);
 BYTE GetOperation(wstring *op);
 inline bool IntegerCompare(unsigned int Lvalue, int operation, unsigned int Rvalue);
-void GetItemName(UnitItemInfo *uInfo, wstring &name);
+void GetItemName(UnitItemInfo *uInfo, string &name);
 void SubstituteNameVariables(UnitItemInfo *uInfo, string &name, const wstring &action_name);
 int GetDefense(ItemInfo *item);
 BYTE GetAffixLevel(BYTE ilvl, BYTE qlvl, BYTE mlvl);
 BYTE GetRequiredLevel(UnitAny* item);
 BYTE RuneNumberFromItemCode(char *code);
+BYTE RuneNumberFromItemCode(wchar_t *code);

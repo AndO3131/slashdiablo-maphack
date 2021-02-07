@@ -384,10 +384,10 @@ void Maphack::OnDraw() {
 							if ((*BH::MiscToggles2)["Item Detailed Notifications"].state
 							  && ((*BH::MiscToggles2)["Item Close Notifications"].state || (dwFlags & ITEMFLAG_NEW))
 							  && action.notifyColor != DEAD_COLOR) {
-								std::string itemName = GetItemName(unit);
+								std::wstring itemName = GetItemName(unit);
 								size_t start_pos = 0;
 								while ((start_pos = itemName.find('\n', start_pos)) != std::string::npos) {
-									itemName.replace(start_pos, 1, " - ");
+									itemName.replace(start_pos, 1, L" - ");
 									start_pos += 3;
 								}
 								PrintText(ItemColorFromQuality(unit->pItemData->dwQuality), "%s", itemName.c_str());

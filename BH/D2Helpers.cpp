@@ -306,10 +306,10 @@ std::string GetItemCode(int dwTxtFileNo) {
 	return code.substr(0, 3);
 }
 
-std::string GetItemName(UnitAny* item) {
+std::wstring GetItemName(UnitAny* item) {
 	wchar_t buffer[256] = L"";
 	D2CLIENT_GetItemName(item, buffer, 256);
-	return UnicodeToAnsi(buffer);
+	return buffer;
 }
 
 bool IsTown(DWORD levelId) {
